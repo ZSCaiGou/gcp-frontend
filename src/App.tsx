@@ -1,22 +1,15 @@
 import { RouterProvider } from "react-router";
 import { router } from "./router";
 import { ConfigProvider } from "antd";
+import { StyleProvider } from "@ant-design/cssinjs";
+import { AntdThemeDefault } from "@/config/theme.ts";
 
 function App() {
-  return (
-    <ConfigProvider
-      theme={{
-        token: {
-          colorPrimary: "#000000",
-          colorInfo: "#000000",
-          colorWarning: "#e2a730",
-          wireframe: true,
-        },
-      }}
-    >
-      <RouterProvider router={router}></RouterProvider>
-    </ConfigProvider>
-  );
+    return (
+        <ConfigProvider theme={AntdThemeDefault}>
+            <RouterProvider router={router}></RouterProvider>
+        </ConfigProvider>
+    );
 }
 
 export default App;
