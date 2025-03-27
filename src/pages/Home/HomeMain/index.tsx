@@ -7,7 +7,7 @@ export default function HomeMain() {
     useEffect(() => {}, []);
 
     const cardList = [];
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 30; i++) {
         cardList.push(<ContentCard key={i}></ContentCard>);
     }
 

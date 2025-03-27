@@ -7,7 +7,7 @@ type MenuItem = Required<MenuProps>["items"][number];
 
 const MenuKey = {
     HomeMain: "home-main",
-    HomeCommunity: "home-community",
+    HomeCommunity: "home-Community",
 };
 
 function getMenuKeyByValue(value: string) {
@@ -39,6 +39,7 @@ export default function SiderBar() {
     // 菜单选中时触发
     const handleSelect = ({ item, key, keyPath, selectedKeys, domEvent }) => {
         const path = MenuKey[key];
+        console.log(path);
         navigate(path);
         setActiveMenu(key);
     };
@@ -49,6 +50,8 @@ export default function SiderBar() {
         const key = getMenuKeyByValue(path);
         if (key) {
             setActiveMenu(key);
+        }else{
+            setActiveMenu("");
         }
     }, [location]);
 

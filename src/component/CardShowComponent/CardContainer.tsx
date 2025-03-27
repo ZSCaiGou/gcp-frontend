@@ -1,22 +1,27 @@
 import { Button, Card, Flex } from "antd";
 
 interface CardContainerProps {
-    title: string;
+    header: string | React.ReactNode;
     children: React.ReactNode;
-    justify?: "start" | "center" | "end" | "space-between" | "space-around" | "space-evenly" | "stretch";
+    justify?:
+        | "start"
+        | "center"
+        | "end"
+        | "space-between"
+        | "space-around"
+        | "space-evenly"
+        | "stretch";
 }
 
 export default function CardContainer({
-    title,
+    header,
     children,
     justify = "start",
 }: CardContainerProps) {
     return (
         <>
             <Card type={"inner"}>
-                <Button variant={"text"} color={"default"}>
-                    {title}
-                </Button>
+                <div>{header}</div>
                 <Flex
                     style={{ marginTop: "20px" }}
                     gap={"30px"}

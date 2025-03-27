@@ -18,12 +18,15 @@ import { Space, Tabs, message, theme, Button, Flex } from "antd";
 import type { CSSProperties } from "react";
 import { useState } from "react";
 import { LoginType, LoginUserDto } from "@/interface/user.ts";
-import { loginUser } from "@/api/user.api.ts";
+import { getVerifyCode, loginUser } from "@/api/user.api.ts";
 import { useNavigate } from "react-router";
+import useUserStore from "@/stores/useUserStore.tsx";
 
 export default function Login() {
     const { token } = theme.useToken();
     const [loginType, setLoginType] = useState<LoginType>("phone");
+    const initUser = useUserStore((state) => state.initUser);
+    const userInfo = useUserStore((state) => state.user);
     const navigate = useNavigate();
     const iconStyles: CSSProperties = {
         marginInlineStart: "16px",
@@ -32,6 +35,7 @@ export default function Login() {
         verticalAlign: "middle",
         cursor: "pointer",
     };
+    // 登录
     const handleLogin = async (values: {
         username: string;
         password: string;
@@ -50,17 +54,27 @@ export default function Login() {
             type: loginType,
         };
         loginUser(loginData)
-            .then((res: { data: { token: string } }) => {
+            .then((res: { data: { token: string; userId: string } }) => {
                 message.success("登录成功！");
+
                 localStorage.setItem("token", res.data.token);
-                return true;
+
+                initUser();
+                navigate("/", { replace: true });
             })
             .catch((err) => {
                 message.error(err.message);
-                return false;
             });
-        navigate("/")
-
+    };
+    // 获取验证码
+    const handleGetCaptcha = (phone: string) => {
+        getVerifyCode(phone)
+            .then((res) => {
+                message.success("验证码发送成功！");
+            })
+            .catch((err) => {
+                message.error(err.message);
+            });
     };
     return (
         <ProConfigProvider hashed={false}>
@@ -146,7 +160,7 @@ export default function Login() {
                                         />
                                     ),
                                 }}
-                                name="mobile"
+                                name="username"
                                 placeholder={"手机号"}
                                 rules={[
                                     {
@@ -178,14 +192,17 @@ export default function Login() {
                                     }
                                     return "获取验证码";
                                 }}
-                                name="captcha"
+                                name="password"
+                                phoneName={"username"}
                                 rules={[
                                     {
                                         required: true,
                                         message: "请输入验证码！",
                                     },
                                 ]}
-                                onGetCaptcha={async () => {}}
+                                onGetCaptcha={async (username) => {
+                                    handleGetCaptcha(username);
+                                }}
                             />
                         </>
                     )}

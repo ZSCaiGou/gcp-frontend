@@ -27,7 +27,7 @@ function FastForward() {
 
     return (
         <>
-            <CardContainer title={"快速入口"} justify={"space-evenly"}> {cardList} </CardContainer>
+            <CardContainer header={"快速入口"} justify={"space-evenly"}> {cardList} </CardContainer>
         </>
     );
 }
@@ -35,13 +35,13 @@ function FastForward() {
 function UserPreference() {
     const cardList = [];
     cardList.push(
-        <ImgCard key={"wukong"} title={"黑神话悟空"} src={wukong}></ImgCard>,
+        <ImgCard navigateTo={"/home/home-game/21"} key={"wukong"} title={"黑神话悟空"} src={wukong}></ImgCard>,
         <ImgCard key={"cs2"} title={"CS2"} src={cs}></ImgCard>,
     );
 
     return (
         <>
-            <CardContainer title={"用户偏好"} justify={"space-evenly"}>{cardList}</CardContainer>
+            <CardContainer header={"用户偏好"} justify={"space-evenly"}>{cardList}</CardContainer>
         </>
     );
 }

@@ -23,7 +23,7 @@ export default function Home() {
                     className={"!bg-white"}
                     style={{ position: "sticky", top: 0, zIndex: 1000 }}
                 >
-                    <Row align="middle">
+                    <Row align="middle" justify={"center"} className={"!h-full"}>
                         {/* 左侧logo */}
                         <Col span={4}>
                             <Flex justify={"center"} align={"center"}>
@@ -31,26 +31,26 @@ export default function Home() {
                             </Flex>
                         </Col>
                         {/*中间搜索栏*/}
-                        <Col span={12}>
-                            <Flex justify={"center"} align={"center"}>
+                        <Col span={16}>
+                            <Flex className={"w-2/3"} justify={"center"} align={"center"}>
                                 <SearchBar></SearchBar>
                             </Flex>
                         </Col>
                         {/* 右侧头像栏 */}
-                        <Col span={8} style={{ textAlign: "right" }}>
+                        <Col span={4} style={{ textAlign: "right" }}>
                             <AvatarBar></AvatarBar>
                         </Col>
                     </Row>
                 </Header>
 
-                <Content className={"!overflow-y-scroll"} style={{ padding: "24px 50px" }}>
+                <Content className={"!h-full"}  style={{ padding: "24px 50px" }}>
                     <Row gutter={[24, 24]}>
                         {/*左侧导航栏*/}
                         <Col xs={24} md={4}>
                             <SiderBar></SiderBar>
                         </Col>
                         {/* 中间主内容区（占16栅格） */}
-                        <Col xs={24} md={16}>
+                        <Col  xs={24} md={16}>
                             {/*<GameCarousel />      /!* 游戏轮播推荐 *!/*/}
                             {/*<HotTopicsSection />  /!* 热门话题讨论 *!/*/}
                             {/*<ContentFeed />       /!* 动态内容流 *!/*/}

@@ -1,7 +1,7 @@
-import { RouterProvider } from "react-router";
+import { RouterProvider, ScrollRestoration } from "react-router";
 import { router } from "./router";
 import { ConfigProvider } from "antd";
-import { StyleProvider } from "@ant-design/cssinjs";
+
 import { AntdThemeDefault } from "@/config/theme.ts";
 
 function App() {
