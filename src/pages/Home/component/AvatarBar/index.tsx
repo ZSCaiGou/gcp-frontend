@@ -77,7 +77,7 @@ export function AvatarBar() {
                             icon={<UserOutlined />}
                         ></Avatar>
                         <div
-                            className={"ml-2 text-[14px] font-bold text-black"}
+                            className={"ml-2 text-[14px] font-bold"}
                         >
                             {userInfo.profile.nickname
                                 ? userInfo.profile.nickname

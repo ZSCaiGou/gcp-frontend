@@ -1,106 +1,76 @@
 import axios, { AxiosError } from "axios";
-import { LoginUserDto, UserStoreState } from "@/interface/user.ts";
-import { Result } from "@/interface/common.ts";
-import { FormValue } from "@/pages/Home/HomePersonal";
+import { UserContent } from "@/Entity/user_content.entity.ts";
 
-// 登录
-export function loginUser(data: LoginUserDto): Promise<unknown> {
+export function savePostContentAsDraft(data) {
     return new Promise((resolve, reject) => {
         axios
-            .post("/user/login", data)
+            .post("/user-content/post-draft",data)
             .then((res) => {
                 return resolve(res.data);
             })
             .catch((err: AxiosError) => {
-                console.log(err);
                 return reject(err.response.data);
             });
     });
 }
 
-// 获取验证码
-export function getVerifyCode(phone: string): Promise<unknown> {
+export function savePostContent(data) {
     return new Promise((resolve, reject) => {
         axios
-            .get("/user/getVerifyCode?phone=" + phone)
+            .post("/user-content/post-content",data)
             .then((res) => {
                 return resolve(res.data);
             })
             .catch((err: AxiosError) => {
-                console.log(err);
                 return reject(err.response.data);
             });
     });
 }
 
-// 获取用户信息
-export function getUserData(): Promise<Result<UserStoreState>> {
+export function saveUploadContent(data) {
     return new Promise((resolve, reject) => {
         axios
-            .get("/user/userdata")
+            .post("/user-content/upload-content",data)
             .then((res) => {
                 return resolve(res.data);
             })
             .catch((err: AxiosError) => {
-                console.log(err);
                 return reject(err.response.data);
             });
     });
 }
-
-// 更新用户信息
-export function updateUserProfile(data: FormValue): Promise<Result<null>> {
+export function  saveUploadContentAsDraft(data) {
     return new Promise((resolve, reject) => {
         axios
-            .put("/user/userprofile", data)
+            .post("/user-content/upload-draft",data)
             .then((res) => {
                 return resolve(res.data);
             })
             .catch((err: AxiosError) => {
-                console.log(err);
                 return reject(err.response.data);
             });
     });
 }
-
-// 更新用户头像
-export function updateUserAvatar(data: FormData): Promise<Result<null>> {
+export function saveNewsContent(data) {
     return new Promise((resolve, reject) => {
         axios
-            .post("/user/useravatar", data)
+            .post("/user-content/news-content",data)
             .then((res) => {
                 return resolve(res.data);
             })
             .catch((err: AxiosError) => {
-                console.log(err);
                 return reject(err.response.data);
             });
     });
 }
-
-export function getUserDynamic() {
+export function saveNewsContentAsDraft(data) {
     return new Promise((resolve, reject) => {
         axios
-            .get("/user/dynamic")
+            .post("/user-content/news-draft",data)
             .then((res) => {
                 return resolve(res.data);
             })
             .catch((err: AxiosError) => {
-                console.log(err);
-                return reject(err.response.data);
-            });
-    });
-}
-
-export function getUserUpload() {
-    return new Promise((resolve, reject) => {
-        axios
-            .get("/user/upload")
-            .then((res) => {
-                return resolve(res.data);
-            })
-            .catch((err: AxiosError) => {
-                console.log(err);
                 return reject(err.response.data);
             });
     });

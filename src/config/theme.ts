@@ -1,3 +1,5 @@
+import { theme } from "antd";
+
 export const AntdThemeDefault = {
     token: {
         colorPrimary: "#000000",
@@ -13,4 +15,21 @@ export const AntdThemeDefault = {
             itemSelectedColor: "rgb(0,0,0)",
         },
     },
+};
+export const AntdThemeDark = {
+    token: {
+        colorWarning: "#e2a730",
+        wireframe: true,
+        colorLinkHover: "#13c2c2",
+        colorPrimary: "#487cc4",
+        colorInfo: "#487cc4",
+        colorBgBase: "#000000",
+    },
+    components: {
+        Menu: {
+            itemSelectedBg: "rgba(202,208,212,0.25)",
+            itemSelectedColor: "rgb(0,0,0)",
+        },
+    },
+    algorithm: theme.darkAlgorithm,
 };

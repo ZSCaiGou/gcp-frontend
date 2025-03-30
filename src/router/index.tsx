@@ -16,6 +16,10 @@ import Guide from "@/pages/Home/HomeGame/Guide";
 import HomePersonal from "@/pages/Home/HomePersonal";
 import Dynamic from "@/pages/Home/HomePersonal/Dynamic";
 import Upload from "@/pages/Home/HomePersonal/Upload";
+import HomeCreate from "@/pages/Home/HomeCreate";
+import PostUpload from "@/pages/Home/HomeCreate/PostUpload";
+import PostDynamic from "@/pages/Home/HomeCreate/PostDynamic";
+import PostNews from "@/pages/Home/HomeCreate/PostNews";
 
 export const router = createBrowserRouter([
     {
@@ -58,7 +62,7 @@ export const router = createBrowserRouter([
                 path: "home-personal",
                 id: "home-personal",
                 element: <HomePersonal />,
-                children:[
+                children: [
                     {
                         index: true,
                         element: <Navigate to={"dynamic"} replace></Navigate>,
@@ -72,8 +76,8 @@ export const router = createBrowserRouter([
                         path: "upload",
                         id: "upload",
                         element: <Upload />,
-                    }
-                ]
+                    },
+                ],
             },
             {
                 path: "home-game/:id",
@@ -104,6 +108,34 @@ export const router = createBrowserRouter([
                         id: "guide",
                         element: <Guide />,
                     },
+                ],
+            },
+            {
+                path: "home-create",
+                id: "home-create",
+                element: <HomeCreate />,
+                children: [
+                    {
+                        index: true,
+                        element: (
+                            <Navigate to={"post-dynamic"} replace></Navigate>
+                        ),
+                    },
+                    {
+                        path: "post-dynamic",
+                        id: "post-dynamic",
+                        element: <PostDynamic />,
+                    },
+                    {
+                        path: "post-upload",
+                        id: "post-upload",
+                        element: <PostUpload />,
+                    },
+                    {
+                        path: "post-news",
+                        id: "post-news",
+                        element: <PostNews />,
+                    }
                 ],
             },
         ],

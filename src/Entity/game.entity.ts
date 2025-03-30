@@ -11,4 +11,8 @@ export class Game {
     category: string[];
 
     tags: JSON;
+
+    game_img_url:string
+
+    hot_point:number
 }

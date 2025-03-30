@@ -1,23 +1,30 @@
 import CardContainer from "@/component/CardShowComponent/CardContainer.tsx";
-import { LeftOutlined, UploadOutlined, UserOutlined } from "@ant-design/icons";
+import { LeftOutlined, UserOutlined } from "@ant-design/icons";
 import {
     Avatar,
     Button,
     Checkbox,
     Flex,
     Form,
+    GetProp,
+    Image,
     Input,
     message,
     Modal,
     Tabs,
     Tag,
     Upload,
+    UploadFile,
+    UploadProps,
 } from "antd";
 import { Outlet, useNavigate } from "react-router";
 import useUserStore from "@/stores/useUserStore.tsx";
 import { useEffect, useState } from "react";
+import ImgCrop from "antd-img-crop";
+import { updateUserAvatar, updateUserProfile } from "@/api/user.api.ts";
 
-interface FormValue {
+// 表单值
+export interface FormValue {
     phone: string;
     username: string;
     email: string;
@@ -25,6 +32,16 @@ interface FormValue {
     signature: string;
 }
 
+type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
+// 获取文件base64
+const getBase64 = (file: FileType): Promise<string> =>
+    new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = (error) => reject(error);
+    });
+// 等级
 const getNextLevelEx = (level: number) => {
     if (level < 10) {
         return 100;
@@ -41,12 +58,105 @@ export default function HomePersonal() {
 
     const userInfo = useUserStore((state) => state.user);
     const [editForm] = Form.useForm();
-
+    // 编辑状态
     const [isEdit, setIsEdit] = useState(false);
     const [isEditLoading, setIsEditLoading] = useState(false);
-
+    // 头像上传
+    const [uploadAvatarFile, setUploadAvatarFile] = useState<UploadFile>();
+    const [uploadAvatarUrl, setUploadAvatarUrl] = useState<string>();
+    // 表单值
     const [formData, setFormData] = useState<FormValue>();
-    // element
+
+    // 保存修改
+    function handleSaveProfile() {
+        const newFormData = editForm.getFieldsValue();
+        let isDataChanged = false;
+        // 判读是否有修改
+        if (
+            !(
+                userInfo.username === newFormData.username &&
+                userInfo.email === newFormData.email &&
+                userInfo.profile.nickname === newFormData.nickname &&
+                userInfo.profile.bio?.signature === newFormData.signature
+            )
+        ) {
+            isDataChanged = true;
+            setIsEditLoading(true);
+            updateUserProfile(newFormData)
+                .then((res) => {
+                    message.success(res.message);
+                    setIsEdit(false);
+                    setIsEditLoading(false);
+                    useUserStore
+                        .getState()
+                        .refreshUser()
+                        .then(() => {});
+                })
+                .catch((error) => {
+                    message.error(error.message);
+                });
+        }
+        if (uploadAvatarFile) {
+            isDataChanged = true;
+            console.log(uploadAvatarFile);
+            // 上传头像
+            const avatarFormData = new FormData();
+
+            avatarFormData.append(
+                "avatar",
+                uploadAvatarFile as unknown as File,
+            );
+            setIsEditLoading(true);
+            updateUserAvatar(avatarFormData)
+                .then((res) => {
+                    message.success(res.message);
+                    setIsEdit(false);
+                    setIsEditLoading(false);
+                    useUserStore
+                        .getState()
+                        .refreshUser()
+                        .then(() => {});
+                })
+                .catch((error) => {
+                    message.error(error.message);
+                });
+        }
+        if (!isDataChanged) {
+            setIsEdit(false);
+            setIsEditLoading(false);
+        }
+    }
+
+    function handleSaveAvatar() {}
+
+    // 表单值初始化
+    useEffect(() => {
+        if (userInfo) {
+            setFormData({
+                phone: userInfo.phone,
+                username: userInfo.username,
+                email: userInfo.email,
+                nickname: userInfo.profile.nickname,
+                signature: userInfo.profile.bio?.signature,
+            });
+            setUploadAvatarUrl(userInfo.profile.avatar_url);
+        }
+    }, [userInfo]);
+
+    useEffect(() => {
+        if (uploadAvatarFile) {
+            getBase64(uploadAvatarFile as FileType)
+                .then((url) => {
+                    console.log(url);
+                    setUploadAvatarUrl(url);
+                })
+                .catch((error) => {
+                    message.error(error.message);
+                });
+        }
+    }, [uploadAvatarFile]);
+
+    // 头部标签
     const contentHeader = (
         <Tabs
             onChange={(key) => navigate(key, { replace: true })}
@@ -57,47 +167,14 @@ export default function HomePersonal() {
             <Tabs.TabPane tab="投稿" key="upload"></Tabs.TabPane>
         </Tabs>
     );
-
-    function handleOk() {
-        const newFormData = editForm.getFieldsValue();
-        // 判读是否有修改
-        if (
-            userInfo.username === newFormData.username &&
-            userInfo.email === newFormData.email &&
-            userInfo.profile.nickname === newFormData.nickname &&
-            userInfo.profile.bio?.signature === newFormData.signature
-        ) {
-            setIsEdit(false);
-            return;
-        }
-        setIsEditLoading(true);
-
-        setIsEditLoading(false);
-        setIsEdit(false);
-        message.success("修改成功");
-    }
-
-    function handleCancel() {
-        setIsEdit(false);
-    }
-
-    useEffect(() => {
-        if (userInfo) {
-            setFormData({
-                phone: userInfo.phone,
-                username: userInfo.username,
-                email: userInfo.email,
-                nickname: userInfo.profile.nickname,
-                signature: userInfo.profile.bio?.signature,
-            });
-        }
-    }, [userInfo]);
-
+    // 判断是否有用户信息
     if (!userInfo) {
         return <div>loading...</div>;
     }
+
     return (
         <>
+            {/*用户信息卡片*/}
             <CardContainer
                 header={
                     <Button
@@ -173,16 +250,16 @@ export default function HomePersonal() {
                             justify="space-between"
                             align="center"
                         >
-                            <span className="text-xs text-gray-500">
+                            <span className="text-xs ">
                                 Lv.{userInfo.level.level}
                             </span>
-                            <span className="text-xs text-gray-500">
+                            <span className="text-xs ">
                                 下一等级: Lv.{userInfo.level.level + 1}
                             </span>
                         </Flex>
 
                         {/* 进度条 */}
-                        <div className="h-2.5 w-full rounded-full bg-gray-100">
+                        <div className="h-2.5 w-full rounded-full bg-gray-200">
                             <div
                                 className="h-2.5 rounded-full bg-blue-500"
                                 style={{
@@ -193,10 +270,10 @@ export default function HomePersonal() {
 
                         {/* 经验值显示 */}
                         <Flex className="w-full" justify="space-between">
-                            <span className="text-xs text-gray-500">
+                            <span className="text-xs ">
                                 {userInfo.level.ex} EXP
                             </span>
-                            <span className="text-xs text-gray-500">
+                            <span className="text-xs ">
                                 {getNextLevelEx(userInfo.level.level)} EXP
                             </span>
                         </Flex>
@@ -212,7 +289,7 @@ export default function HomePersonal() {
                         vertical
                     >
                         <span className={"text-xl"}>0</span>
-                        <span className={"text-xs text-gray-500"}>粉丝</span>
+                        <span className={"text-xs "}>粉丝</span>
                     </Flex>
                     <Flex
                         className={"w-1/3"}
@@ -222,7 +299,7 @@ export default function HomePersonal() {
                         vertical
                     >
                         <span className={"text-xl"}>0</span>
-                        <span className={"text-xs text-gray-500"}>关注</span>
+                        <span className={"text-xs "}>关注</span>
                     </Flex>
                     <Flex
                         className={"w-1/3"}
@@ -236,14 +313,60 @@ export default function HomePersonal() {
                     </Flex>
                 </Flex>
             </CardContainer>
+            {/* 修改资料弹窗 */}
             <Modal
                 open={isEdit}
-                onOk={handleOk}
+                onOk={handleSaveProfile}
                 confirmLoading={isEditLoading}
-                onCancel={handleCancel}
+                onCancel={() => {
+                    setIsEdit(false);
+                    setUploadAvatarFile(undefined);
+                    setUploadAvatarUrl(userInfo.profile.avatar_url);
+                    editForm.resetFields();
+                }}
                 cancelText={"取消"}
                 okText={"保存"}
+                footer={(_, { OkBtn, CancelBtn }) => {
+                    return (
+                        <Flex justify={"center"} gap={"1rem"}>
+                            <CancelBtn />
+                            <OkBtn />
+                        </Flex>
+                    );
+                }}
+                destroyOnClose={true}
             >
+                <Flex justify={"center"} className={"!mb-4"}>
+                    <ImgCrop
+                        zoomSlider
+                        showReset
+                        resetText={"重置"}
+                        cropShape={"round"}
+                        minZoom={1}
+                        quality={0.8}
+                    >
+                        <Upload
+                            name="avatar"
+                            listType="picture-circle"
+                            beforeUpload={(file: UploadFile) => {
+                                setUploadAvatarFile(file);
+                                return false;
+                            }}
+                            showUploadList={false}
+                            onChange={(info) => {
+                                console.log(info);
+                            }}
+                        >
+                            <Image
+                                width={100}
+                                height={100}
+                                className={"rounded-full"}
+                                src={uploadAvatarUrl}
+                                preview={false}
+                            ></Image>
+                        </Upload>
+                    </ImgCrop>
+                </Flex>
                 <Form
                     name="editForm"
                     form={editForm}
@@ -290,7 +413,9 @@ export default function HomePersonal() {
                     </Form.Item>
                 </Form>
             </Modal>
+
             <div className={"my-5 w-full"}></div>
+            {/* 内容卡片 */}
             <CardContainer header={contentHeader}>
                 <Outlet />
             </CardContainer>

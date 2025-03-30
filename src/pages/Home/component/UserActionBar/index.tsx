@@ -14,7 +14,7 @@ function FastForward() {
     const cardList = [];
 
     cardList.push(
-        <ImgCard key={"gr"} size={32} title={"个人中心"}>
+        <ImgCard navigateTo={"/home/home-personal"} key={"gr"} size={32} title={"个人中心"}>
             <UserOutlined style={{ fontSize: 24, color: "orange" }} />
         </ImgCard>,
         <ImgCard key={"zy"} size={32} title={"资源库"}>

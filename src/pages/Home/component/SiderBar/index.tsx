@@ -1,7 +1,9 @@
-import { Menu, MenuProps } from "antd";
+import { Button, Flex, Menu, MenuProps } from "antd";
 import { HomeOutlined, ProductOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
+import { useTheme } from "@/App.tsx";
+import useUserStore from "@/stores/useUserStore.tsx";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -23,6 +25,8 @@ export default function SiderBar() {
     const [activeMenu, setActiveMenu] = useState("home-main");
     const navigate = useNavigate();
     const location = useLocation();
+    const isDark = useTheme((state) => state.isDark);
+    const isLogin = useUserStore((state) => state.isLogin);
     const items: MenuItem[] = [
         {
             key: "HomeMain",
@@ -50,7 +54,7 @@ export default function SiderBar() {
         const key = getMenuKeyByValue(path);
         if (key) {
             setActiveMenu(key);
-        }else{
+        } else {
             setActiveMenu("");
         }
     }, [location]);
@@ -62,9 +66,17 @@ export default function SiderBar() {
                 defaultSelectedKeys={[activeMenu]}
                 mode="inline"
                 selectedKeys={[activeMenu]}
-                className={"!rounded !bg-white"}
+                className={"!rounded " + (isDark ? "bg-gray-800" : "bg-white")}
                 onSelect={handleSelect}
             ></Menu>
+
+            {isLogin && (
+                <Flex className={"w-full"} justify={"center"}>
+                    <Button onClick={() => navigate("home-create")} type={"primary"} className={"mt-4 w-4/5"}>
+                        发布内容
+                    </Button>
+                </Flex>
+            )}
         </>
     );
 }

@@ -12,4 +12,6 @@ export class Topic {
     created_at: Date;
 
     updated_at: Date;
+    hot_point: number;
+    join_count: number;
 }

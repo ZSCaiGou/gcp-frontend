@@ -1,12 +1,31 @@
 import { RouterProvider, ScrollRestoration } from "react-router";
 import { router } from "./router";
-import { ConfigProvider } from "antd";
+import { ConfigProvider, ThemeConfig } from "antd";
 
-import { AntdThemeDefault } from "@/config/theme.ts";
+import { AntdThemeDark, AntdThemeDefault } from "@/config/theme.ts";
+import { create } from "zustand/react";
+
+interface ThemeState {
+    theme: ThemeConfig;
+    isDark: boolean;
+    toggleTheme: () => void;
+}
+
+export const useTheme = create<ThemeState>((set) => ({
+    theme: AntdThemeDefault,
+    isDark: false,
+    toggleTheme: () => {
+        set((state) => ({
+            theme: state.isDark ? AntdThemeDefault : AntdThemeDark,
+            isDark: !state.isDark
+        }));
+    }
+}));
 
 function App() {
+    const theme = useTheme((state) => state.theme);
     return (
-        <ConfigProvider theme={AntdThemeDefault}>
+        <ConfigProvider theme={theme}>
             <RouterProvider router={router}></RouterProvider>
         </ConfigProvider>
     );
