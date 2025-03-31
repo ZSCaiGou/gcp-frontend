@@ -11,23 +11,25 @@ interface CardContainerProps {
         | "space-around"
         | "space-evenly"
         | "stretch";
+    align?: "top" | "middle" | "bottom" | "start" |"center";
 }
 
 export default function CardContainer({
     header,
     children,
     justify = "start",
+    align = "center",
 }: CardContainerProps) {
     return (
         <>
-            <Card type={"inner"}>
+            <Card type={"inner"} className={"!w-full"}>
                 <div>{header}</div>
                 <Flex
                     style={{ marginTop: "20px" }}
                     gap={"30px"}
                     wrap
                     justify={justify}
-                    align={"center"}
+                    align={align}
                 >
                     {children}
                 </Flex>

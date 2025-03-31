@@ -2,6 +2,7 @@ import axios, { AxiosError } from "axios";
 import { LoginUserDto, UserStoreState } from "@/interface/user.ts";
 import { Result } from "@/interface/common.ts";
 import { FormValue } from "@/pages/Home/HomePersonal";
+import { UserContent } from "@/Entity/user_content.entity.ts";
 
 // 登录
 export function loginUser(data: LoginUserDto): Promise<unknown> {
@@ -78,7 +79,8 @@ export function updateUserAvatar(data: FormData): Promise<Result<null>> {
     });
 }
 
-export function getUserDynamic() {
+// 获取用户动态
+export function getUserDynamic(): Promise<Result<UserContent[]>> {
     return new Promise((resolve, reject) => {
         axios
             .get("/user/dynamic")
@@ -86,13 +88,12 @@ export function getUserDynamic() {
                 return resolve(res.data);
             })
             .catch((err: AxiosError) => {
-                console.log(err);
                 return reject(err.response.data);
             });
     });
 }
-
-export function getUserUpload() {
+// 获取用户上传
+export function getUserUpload(): Promise<Result<UserContent[]>> {
     return new Promise((resolve, reject) => {
         axios
             .get("/user/upload")

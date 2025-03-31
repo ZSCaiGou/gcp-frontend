@@ -20,6 +20,7 @@ import HomeCreate from "@/pages/Home/HomeCreate";
 import PostUpload from "@/pages/Home/HomeCreate/PostUpload";
 import PostDynamic from "@/pages/Home/HomeCreate/PostDynamic";
 import PostNews from "@/pages/Home/HomeCreate/PostNews";
+import HomeContentDetail from "@/pages/Home/HomeContentDetail";
 
 export const router = createBrowserRouter([
     {
@@ -80,7 +81,7 @@ export const router = createBrowserRouter([
                 ],
             },
             {
-                path: "home-game/:id",
+                path: "home-game/:gameId",
                 id: "home-game",
                 element: <HomeGame />,
                 children: [
@@ -138,6 +139,11 @@ export const router = createBrowserRouter([
                     }
                 ],
             },
+            {
+                path:"home-content-detail/:contentId",
+                id: "home-content-detail",
+                element: <HomeContentDetail />,
+            }
         ],
     },
     {

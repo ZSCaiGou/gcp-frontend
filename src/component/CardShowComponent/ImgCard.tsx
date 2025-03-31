@@ -10,12 +10,16 @@ export interface ImgCardProps {
     children?: ReactNode;
     fontSize?: number;
     navigateTo?: string;
+    width?: number;
+    height?: number;
 }
 
 export default function ImgCard({
     src,
     title,
     size = 48,
+    width =48,
+    height = 48,
     imgSize = 32,
     children,
     fontSize = 12,

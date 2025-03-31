@@ -1,3 +1,6 @@
+import { Game } from "@/Entity/game.entity.ts";
+import { Topic } from "@/Entity/topic.entity.ts";
+
 /**
  * 用户内容类型枚举
  * @enum {string}
@@ -44,11 +47,23 @@ export class UserContent {
 
     content: string;
 
-    cover_url: string[];
+    cover_url: string;
+
+    picture_urls: string[];
 
     status: ContentStatus;
 
     create_time: Date;
 
     update_time: Date;
+
+    game_tags?: Game[];
+    topic_tags?: Topic[];
+
+    user_info?: {
+        id: string;
+        nickname: string;
+        avatar_url: string;
+        level: number;
+    };
 }

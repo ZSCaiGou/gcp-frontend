@@ -1,15 +1,27 @@
 import ContentCard from "@/pages/Home/HomeMain/component/ContentCard";
-import { Flex, Space } from "antd";
-import { useEffect } from "react";
+import { Flex, message, Space } from "antd";
+import { useEffect, useState } from "react";
+import { getMainUserContentList } from "@/api/usercontent.api.ts";
+import { UserContent } from "@/Entity/user_content.entity.ts";
+import { useNavigate } from "react-router";
 
 export default function HomeMain() {
-    //TODO:从后端获取数据
-    useEffect(() => {}, []);
-
-    const cardList = [];
-    for (let i = 0; i < 30; i++) {
-        cardList.push(<ContentCard key={i}></ContentCard>);
-    }
+    const [contentList, setContentList] = useState<UserContent[]>();
+    const navigate = useNavigate();
+    useEffect(() => {
+        getMainUserContentList()
+            .then((res) => {
+                setContentList(res.data);
+            })
+            .catch((err) => {
+                message.error(err.message);
+            });
+    }, []);
+    const cardList = contentList?.map((item) => (
+        <ContentCard  onClick={() => {
+            navigate(`/home/home-content-detail/${item.id}`)
+        }} key={item.id} userContent={item} />
+    ));
 
     return (
         <>

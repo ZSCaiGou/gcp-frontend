@@ -22,8 +22,6 @@ import {
     saveUploadContentAsDraft,
 } from "@/api/usercontent.api.ts";
 
-import { getGameTags } from "@/api/game.api.ts";
-import { getTopicTags } from "@/api/topic.api.ts";
 import { PlusOutlined, SmileOutlined } from "@ant-design/icons";
 import MyEditor from "@/component/MyEditor";
 import AddTagContainer from "@/pages/Home/HomeCreate/component/AddTagContainer";
@@ -63,7 +61,7 @@ export default function PostUpload() {
             <PlusOutlined />
         </button>
     );
-
+    // 发布和存草稿
     const handlePostUploadContent = (type: "draft" | "publish") => {
         const data = {
             title: contentTitle,

@@ -1,12 +1,21 @@
-import { Flex, Image } from "antd";
+import { Flex, Image, message } from "antd";
 import CardContainer from "@/component/CardShowComponent/CardContainer.tsx";
-import wukong from "@/assets/wukong.png";
+
 import { useLocation, useNavigate } from "react-router";
+import { ReactNode, useEffect, useState } from "react";
+import { Game } from "@/Entity/game.entity.ts";
+import {
+    getGameCategoryList,
+    getGameCommunityByCategory,
+    getHotGameCommunityList,
+    postGameCommunityByCategoryList,
+} from "@/api/game.api.ts";
+import { Category } from "@/Entity/category.entity.ts";
 
 interface GameCardProps {
     src: string;
     title: string;
-    id: number;
+    id: bigint;
 }
 
 // 游戏卡片组件
@@ -37,31 +46,77 @@ function GameCard({ src, title, id }: GameCardProps) {
 
 export default function HomeCommunity() {
     const cardList = [];
-    for (let i = 0; i < 30; i++) {
-        cardList.push(
-            <GameCard
-                key={i}
-                src={wukong}
-                title={"黑神话悟空"}
-                id={23}
-            ></GameCard>,
-        );
-    }
+    const [hotGameCommunityList, setHotGameCommunityList] = useState<Game[]>();
+    const [categoryList, setCategoryList] = useState<Category[]>();
+    const [containerList, setContainerList] = useState<ReactNode[]>();
+    useEffect(() => {
+        // 获取热门社区游戏列表
+        getHotGameCommunityList()
+            .then((res) => {
+                setHotGameCommunityList(res.data);
+            })
+            .catch((err) => {
+                message.error(err.message);
+            });
+        // 获取分类列表
+        getGameCategoryList()
+            .then((res) => {
+                setCategoryList(res.data);
+            })
+            .catch((err) => {
+                message.error(err.message);
+            });
+    }, []);
+    useEffect(() => {
+        if (categoryList?.length && categoryList.length > 0) {
+            postGameCommunityByCategoryList(
+                categoryList.map((category) => category.name),
+            ).then((res) => {
+                setContainerList(
+                    res.data.map((categoryGameList) => (
+                        <CardContainer
+                            justify={"start"}
+                            align={"top"}
+                            key={Object.keys(categoryGameList)[0]}
+                            header={Object.keys(categoryGameList)[0] + "游戏社区"}
+                        >
+                            {categoryGameList[
+                                Object.keys(categoryGameList)[0]
+                            ].map((game) => (
+                                <GameCard
+                                    key={game.id}
+                                    src={game.game_img_url}
+                                    title={game.title}
+                                    id={game.id}
+                                />
+                            ))}
+                        </CardContainer>
+                    )),
+                );
+            });
+        }
+    }, [categoryList]);
+
     return (
         <>
             <Flex gap={"middle"} align={"start"} vertical>
                 {/*热门社区*/}
-                <CardContainer key={"hot"} header={"热门社区"}>
-                    {cardList}
+                <CardContainer
+                    justify={"start"}
+                    align={"top"}
+                    key={"hot"}
+                    header={"热门社区"}
+                >
+                    {hotGameCommunityList?.map((game) => (
+                        <GameCard
+                            key={game.id}
+                            src={game.game_img_url}
+                            title={game.title}
+                            id={game.id}
+                        />
+                    ))}
                 </CardContainer>
-                {/*单机社区*/}
-                <CardContainer key={"single"} header={"单机游戏社区"}>
-                    {cardList}
-                </CardContainer>
-                {/*联机社区*/}
-                <CardContainer key={"online"} header={"联机游戏社区"}>
-                    {cardList}
-                </CardContainer>
+                {containerList}
             </Flex>
         </>
     );

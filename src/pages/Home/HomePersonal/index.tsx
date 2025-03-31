@@ -250,10 +250,10 @@ export default function HomePersonal() {
                             justify="space-between"
                             align="center"
                         >
-                            <span className="text-xs ">
+                            <span className="text-xs">
                                 Lv.{userInfo.level.level}
                             </span>
-                            <span className="text-xs ">
+                            <span className="text-xs">
                                 下一等级: Lv.{userInfo.level.level + 1}
                             </span>
                         </Flex>
@@ -270,10 +270,10 @@ export default function HomePersonal() {
 
                         {/* 经验值显示 */}
                         <Flex className="w-full" justify="space-between">
-                            <span className="text-xs ">
+                            <span className="text-xs">
                                 {userInfo.level.ex} EXP
                             </span>
-                            <span className="text-xs ">
+                            <span className="text-xs">
                                 {getNextLevelEx(userInfo.level.level)} EXP
                             </span>
                         </Flex>
@@ -289,7 +289,7 @@ export default function HomePersonal() {
                         vertical
                     >
                         <span className={"text-xl"}>0</span>
-                        <span className={"text-xs "}>粉丝</span>
+                        <span className={"text-xs"}>粉丝</span>
                     </Flex>
                     <Flex
                         className={"w-1/3"}
@@ -299,7 +299,7 @@ export default function HomePersonal() {
                         vertical
                     >
                         <span className={"text-xl"}>0</span>
-                        <span className={"text-xs "}>关注</span>
+                        <span className={"text-xs"}>关注</span>
                     </Flex>
                     <Flex
                         className={"w-1/3"}
@@ -417,8 +417,9 @@ export default function HomePersonal() {
             <div className={"my-5 w-full"}></div>
             {/* 内容卡片 */}
             <CardContainer header={contentHeader}>
-                <Outlet />
+                <></>
             </CardContainer>
+            <Outlet />
         </>
     );
 }

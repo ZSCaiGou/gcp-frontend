@@ -8,13 +8,21 @@ import {
     FolderOpenOutlined,
     UserOutlined,
 } from "@ant-design/icons";
-import { Flex } from "antd";
+import { Flex, message } from "antd";
+import { useEffect, useState } from "react";
+import { getHotGameCommunityList } from "@/api/game.api.ts";
+import { Game } from "@/Entity/game.entity.ts";
 
 function FastForward() {
     const cardList = [];
 
     cardList.push(
-        <ImgCard navigateTo={"/home/home-personal"} key={"gr"} size={32} title={"个人中心"}>
+        <ImgCard
+            navigateTo={"/home/home-personal"}
+            key={"gr"}
+            size={32}
+            title={"个人中心"}
+        >
             <UserOutlined style={{ fontSize: 24, color: "orange" }} />
         </ImgCard>,
         <ImgCard key={"zy"} size={32} title={"资源库"}>
@@ -27,21 +35,39 @@ function FastForward() {
 
     return (
         <>
-            <CardContainer header={"快速入口"} justify={"space-evenly"}> {cardList} </CardContainer>
+            <CardContainer header={"快速入口"} justify={"space-evenly"}>
+                {" "}
+                {cardList}{" "}
+            </CardContainer>
         </>
     );
 }
 
-function UserPreference() {
-    const cardList = [];
-    cardList.push(
-        <ImgCard navigateTo={"/home/home-game/21"} key={"wukong"} title={"黑神话悟空"} src={wukong}></ImgCard>,
-        <ImgCard key={"cs2"} title={"CS2"} src={cs}></ImgCard>,
-    );
+function HotGameCommunity() {
+    const [hotGameCommunityList, setHotGameCommunityList] = useState<Game[]>();
+    useEffect(() => {
+        getHotGameCommunityList()
+            .then((res) => {
+                setHotGameCommunityList(res.data);
+            })
+            .catch((err) => {
+                message.error(err.message);
+            });
+    }, []);
 
     return (
         <>
-            <CardContainer header={"用户偏好"} justify={"space-evenly"}>{cardList}</CardContainer>
+            <CardContainer header={"热门社区"} justify={"space-evenly"}>
+                {hotGameCommunityList &&
+                    hotGameCommunityList.map((game) => (
+                        <ImgCard
+                            navigateTo={`/home/home-game/${game.id}`}
+                            key={game.id}
+                            title={game.title}
+                            src={game.game_img_url}
+                        />
+                    ))}
+            </CardContainer>
         </>
     );
 }
@@ -49,9 +75,9 @@ function UserPreference() {
 export default function UserActionBar() {
     return (
         <>
-            <Flex vertical gap={"middle"} >
+            <Flex vertical gap={"middle"}>
                 <FastForward />
-                <UserPreference />
+                <HotGameCommunity />
             </Flex>
         </>
     );

@@ -1,10 +1,24 @@
-import { Button, Flex, Tabs } from "antd";
-import { Outlet, useNavigate } from "react-router";
+import { Button, Flex, message, Tabs } from "antd";
+import { Outlet, useNavigate, useParams } from "react-router";
 import CardContainer from "@/component/CardShowComponent/CardContainer.tsx";
 import { LeftOutlined } from "@ant-design/icons";
+import { useEffect, useState } from "react";
+import { getGameById } from "@/api/game.api.ts";
+import { Game } from "@/Entity/game.entity.ts";
 
 export default function HomeGame() {
     const navigate = useNavigate();
+    const { gameId } = useParams<{ gameId: string }>();
+    const [gameInfo, setGameInfo] = useState<Game>();
+    useEffect(() => {
+        getGameById(gameId)
+            .then((res) => {
+                setGameInfo(res.data);
+            })
+            .catch((err) => {
+                message.error(err.message);
+            });
+    }, []);
     const header = (
         <>
             <Flex gap={"middle"} justify={"start"} align={"center"}>
@@ -28,8 +42,9 @@ export default function HomeGame() {
     return (
         <>
             <CardContainer header={header}>
-                <Outlet></Outlet>
+                <></>
             </CardContainer>
+            <Outlet context={{ gameId }}></Outlet>
         </>
     );
 }
