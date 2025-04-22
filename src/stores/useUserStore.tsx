@@ -21,7 +21,7 @@ interface UserState {
 }
 
 // 创建用户状态管理
-const useUserStore = create<UserState>((set, get) => ({
+const useUserStore = create<UserState>()((set, get) => ({
     user: null,
     user_id: null,
     isLogin: false,

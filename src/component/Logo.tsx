@@ -1,4 +1,5 @@
 import { useTheme } from "@/App.tsx";
+import { Flex } from "antd";
 
 export const GameCPLogo = () => {
     const isDark = useTheme.getState().isDark;
@@ -7,15 +8,17 @@ export const GameCPLogo = () => {
     };
     return (
         <>
-            <span
-                className={
-                    "cursor-pointer bg-transparent text-center font-sans text-4xl font-bold  italic"
-                    + (isDark ? " text-white" : " text-black")
-                }
-                onClick={handleLogoClick}
-            >
-                GameCP
-            </span>
+            <Flex justify={"center"} align={"center"}>
+                <span
+                    className={
+                        "cursor-pointer bg-transparent text-center font-sans font-bold italic sm:text-3xl md:text-4xl" +
+                        (isDark ? " text-white" : " text-black")
+                    }
+                    onClick={handleLogoClick}
+                >
+                    GameCP
+                </span>
+            </Flex>
         </>
     );
 };

@@ -5,12 +5,12 @@ import { useLocation, useNavigate } from "react-router";
 import { ReactNode, useEffect, useState } from "react";
 import { Game } from "@/Entity/game.entity.ts";
 import {
-    getGameCategoryList,
-    getGameCommunityByCategory,
+    getAllCategoryGameList,
     getHotGameCommunityList,
-    postGameCommunityByCategoryList,
 } from "@/api/game.api.ts";
 import { Category } from "@/Entity/category.entity.ts";
+import { useCacheStore } from "@/stores/useCacheStore.tsx";
+import { CategoryGameList } from "@/interface/game.ts";
 
 interface GameCardProps {
     src: string;
@@ -44,58 +44,79 @@ function GameCard({ src, title, id }: GameCardProps) {
     );
 }
 
+type HomeCommunityPageState = {
+    hotGameCommunityList: Game[];
+    categoryGameList: CategoryGameList[];
+};
 export default function HomeCommunity() {
-    const cardList = [];
-    const [hotGameCommunityList, setHotGameCommunityList] = useState<Game[]>();
-    const [categoryList, setCategoryList] = useState<Category[]>();
-    const [containerList, setContainerList] = useState<ReactNode[]>();
+    const location = useLocation();
+    const cacheKey = location.pathname;
+    const { setCache, getCache } = useCacheStore();
+
+    const [pageState, setPageState] = useState<HomeCommunityPageState>(
+        () =>
+            getCache(cacheKey) || {
+                hotGameCommunityList: [],
+                categoryGameList: [],
+            },
+    );
+
     useEffect(() => {
-        // 获取热门社区游戏列表
-        getHotGameCommunityList()
-            .then((res) => {
-                setHotGameCommunityList(res.data);
-            })
-            .catch((err) => {
-                message.error(err.message);
-            });
-        // 获取分类列表
-        getGameCategoryList()
-            .then((res) => {
-                setCategoryList(res.data);
-            })
-            .catch((err) => {
-                message.error(err.message);
-            });
+        if (
+            pageState.hotGameCommunityList.length === 0 ||
+            pageState.categoryGameList.length === 0
+        ) {
+            // 获取热门社区游戏列表
+            getHotGameCommunityList()
+                .then((res) => {
+                    setPageState((prev) => ({
+                        ...prev,
+                        hotGameCommunityList: res.data,
+                    }));
+                })
+                .catch((err) => {
+                    message.error(err.message);
+                });
+            getAllCategoryGameList()
+                .then((res) => {
+                    setPageState((prev) => ({
+                        ...prev,
+                        categoryGameList: res.data,
+                    }));
+                })
+                .catch((err) => {
+                    message.error(err.message);
+                });
+        }
     }, []);
     useEffect(() => {
-        if (categoryList?.length && categoryList.length > 0) {
-            postGameCommunityByCategoryList(
-                categoryList.map((category) => category.name),
-            ).then((res) => {
-                setContainerList(
-                    res.data.map((categoryGameList) => (
-                        <CardContainer
-                            justify={"start"}
-                            align={"top"}
-                            key={Object.keys(categoryGameList)[0]}
-                            header={Object.keys(categoryGameList)[0] + "游戏社区"}
-                        >
-                            {categoryGameList[
-                                Object.keys(categoryGameList)[0]
-                            ].map((game) => (
-                                <GameCard
-                                    key={game.id}
-                                    src={game.game_img_url}
-                                    title={game.title}
-                                    id={game.id}
-                                />
-                            ))}
-                        </CardContainer>
-                    )),
-                );
-            });
+        return () => {
+            setCache(cacheKey, pageState, { ttl: 10 * 60 * 1000 });
+        };
+    }, [pageState, cacheKey]);
+    const containerList = pageState.categoryGameList.map((item:CategoryGameList) => {
+        const key = Object.keys(item)[0]
+        console.log(item[key]);
+        if(item[key].gameList && item[key].gameList.length > 0 ) {
+            return (
+                <CardContainer
+                    justify={"start"}
+                    align={"top"}
+                    key={key}
+                    header={key + "游戏社区"}
+                >
+                    {item[key]?.gameList?.map((game) => (
+                        <GameCard
+                            key={game.id}
+                            src={game.game_img_url}
+                            title={game.title}
+                            id={game.id}
+                        />
+                    ))}
+                </CardContainer>
+            )
         }
-    }, [categoryList]);
+    });
 
     return (
         <>
@@ -107,7 +128,7 @@ export default function HomeCommunity() {
                     key={"hot"}
                     header={"热门社区"}
                 >
-                    {hotGameCommunityList?.map((game) => (
+                    {pageState.hotGameCommunityList?.map((game) => (
                         <GameCard
                             key={game.id}
                             src={game.game_img_url}

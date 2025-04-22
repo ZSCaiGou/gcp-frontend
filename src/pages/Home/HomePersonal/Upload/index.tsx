@@ -3,7 +3,7 @@ import { UserContent } from "@/Entity/user_content.entity.ts";
 import { useNavigate } from "react-router";
 import { getUserUpload } from "@/api/user.api.ts";
 import { Flex, message } from "antd";
-import ContentCard from "@/pages/Home/HomeMain/component/ContentCard";
+import ContentCard from "@/pages/Home/component/ContentCard";
 
 export default function Upload() {
     const [uploadContentList, setUploadContentList] = useState<UserContent[]>();

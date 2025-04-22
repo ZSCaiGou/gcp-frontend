@@ -1,4 +1,4 @@
-import { Input } from "antd";
+import { Flex, Input } from "antd";
 import { useState } from "react";
 
 export  function SearchBar() {
@@ -13,16 +13,19 @@ export  function SearchBar() {
     };
     return (
         <>
-            <Search
-                onFocus={() => setSearchPopBoxVisible(true)}
-                onBlur={() => setSearchPopBoxVisible(false)}
-                placeholder={"搜索"}
-                onSearch={handleSearch}
-                className={""}
-                size={"large"}
-                enterButton
-                allowClear
-            ></Search>
+            <Flex justify={"center"} align={"middle"}>
+                <Search
+                    onFocus={() => setSearchPopBoxVisible(true)}
+                    onBlur={() => setSearchPopBoxVisible(false)}
+                    placeholder={"搜索"}
+                    onSearch={handleSearch}
+                    className={""}
+                    size={"large"}
+                    enterButton
+                    allowClear
+                ></Search>
+            </Flex>
+
         </>
     );
 }

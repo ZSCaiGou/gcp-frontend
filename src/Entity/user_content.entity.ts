@@ -16,7 +16,25 @@ export enum UserContentType {
     NEWS = "news",
     POST = "post",
 }
+export type UserContentComment = {
 
+    id: string,
+    content: string,
+    likeCount: number,
+    reply_count:number,
+    create_at: string,
+    isLiked: boolean,
+    user_info: {
+        id: string,
+        nickname: string,
+        avatar_url: string,
+    },    
+    replies?: UserContentComment[];
+    showReplies?: boolean;
+    loadingReplies?: boolean;
+    origin_id: string;
+    parent_id: string;
+};
 /**
  * 评论状态枚举
  * @enum {string}
@@ -59,11 +77,16 @@ export class UserContent {
 
     game_tags?: Game[];
     topic_tags?: Topic[];
-
+    isLiked: boolean;
+    likeCount: number;
+    commentCount: number;
+    isFavorited: boolean;
+    favoriteCount: number;
     user_info?: {
         id: string;
         nickname: string;
         avatar_url: string;
         level: number;
     };
+    comments : UserContentComment[];
 }

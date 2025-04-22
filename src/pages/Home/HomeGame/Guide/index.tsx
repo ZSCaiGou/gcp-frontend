@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { getGameCommunityGuideContentList } from "@/api/game.api.ts";
 import { useNavigate, useOutletContext } from "react-router";
 import { UserContent } from "@/Entity/user_content.entity.ts";
-import ContentCard from "@/pages/Home/HomeMain/component/ContentCard";
+import ContentCard from "@/pages/Home/component/ContentCard";
 import { Flex } from "antd";
 
 export default function Guide() {

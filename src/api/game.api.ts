@@ -11,11 +11,11 @@ export function getGameTags(): Promise<Result<Game[]>> {
         axios
             .get("/game/tags")
             .then((res) => {
-                console.log(res.data);
+
                 return resolve(res.data);
             })
             .catch((err: AxiosError) => {
-                console.log(err);
+
                 return reject(err.response.data);
             });
     });
@@ -27,11 +27,11 @@ export function getGameById(id: string): Promise<Result<Game>> {
         axios
             .get("/game/get-game?id=" + id)
             .then((res) => {
-                console.log(res.data);
+
                 return resolve(res.data);
             })
             .catch((err: AxiosError) => {
-                console.log(err);
+
                 return reject(err.response.data);
             });
     });
@@ -43,11 +43,11 @@ export function getHotGameCommunityList(): Promise<Result<Game[]>> {
         axios
             .get("/game/hot-game-community")
             .then((res) => {
-                console.log(res.data);
+
                 return resolve(res.data);
             })
             .catch((err: AxiosError) => {
-                console.log(err);
+
                 return reject(err.response.data);
             });
     });
@@ -69,6 +69,9 @@ export function getGameCategoryList(): Promise<Result<Category[]>> {
     });
 }
 
+
+
+
 // 根据分类获取游戏社区列表
 export function getGameCommunityByCategory(
     category: string,
@@ -86,11 +89,11 @@ export function getGameCommunityByCategory(
             });
     });
 }
-// 根据分类列表获取游戏列表
-export function postGameCommunityByCategoryList(categoryList: string[]):Promise<Result<CategoryGameList[]>> {
+
+export function getAllCategoryGameList(): Promise<Result<CategoryGameList[]>> {
     return new Promise((resolve, reject) => {
         axios
-            .post("/game/game-community-category-list", categoryList)
+            .get("/game/category-game-list")
             .then((res) => {
                 console.log(res.data);
                 return resolve(res.data);
@@ -101,6 +104,7 @@ export function postGameCommunityByCategoryList(categoryList: string[]):Promise<
             });
     });
 }
+
 
 // 获取游戏社区帖子列表
 export function getGameCommunityPostContentList(gameId:string):Promise<Result<UserContent[]>> {

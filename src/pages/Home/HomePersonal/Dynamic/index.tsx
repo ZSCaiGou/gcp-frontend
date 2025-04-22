@@ -3,7 +3,7 @@ import useUserStore from "@/stores/useUserStore.tsx";
 import { getUserDynamic } from "@/api/user.api.ts";
 import { UserContent } from "@/Entity/user_content.entity.ts";
 import { Flex, message } from "antd";
-import ContentCard from "@/pages/Home/HomeMain/component/ContentCard";
+import ContentCard from "@/pages/Home/component/ContentCard";
 import { useNavigate } from "react-router";
 
 export default function Dynamic() {

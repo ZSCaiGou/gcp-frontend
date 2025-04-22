@@ -60,7 +60,7 @@ export default function PostDynamic() {
             type: UserContentType.POST,
             game_ids: gameTags.map((game) => game.id),
             topic_ids: topicTags.map((topic) => topic.id),
-            cover_url: fileList[0].response.data,
+            cover_url: fileList[0]?.response.data || null,
             picture_urls: fileList.map((file) => file.response.data),
         };
         if (type === "draft") {

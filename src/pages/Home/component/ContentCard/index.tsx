@@ -27,7 +27,7 @@ export default function ContentCard({
     useEffect(() => {
         setCarouselContent(
             userContent.picture_urls?.map((image) => (
-                <div className={"text-center"}>
+                <div key={image} className={"text-center"}>
                     <Image
                         key={image}
                         src={image}
@@ -156,6 +156,7 @@ export default function ContentCard({
                     <Flex justify={"center"}>
                         {carouselContent && type === "detail" && (
                             <Carousel
+
                                 className={"!bg-gray-200"}
                                 dots={true}
                                 arrows
@@ -206,7 +207,7 @@ export default function ContentCard({
                     <div
                         className={
                             type === "list"
-                                ? "max-h-[8em] cursor-pointer overflow-clip text-sm"
+                                ? "max-h-[8em] cursor-pointer overflow-hidden overflow-ellipsis text-sm"
                                 : ""
                         }
                         dangerouslySetInnerHTML={{
@@ -218,7 +219,7 @@ export default function ContentCard({
                     ></div>
 
                     {/* 标签 */}
-                    <Flex justify={"start"} align={"center"}>
+                    <Flex justify={"start"} align={"center"} wrap={"wrap"}>
                         {gameTagList && gameTagList}
                         {topicTagList && topicTagList}
                     </Flex>

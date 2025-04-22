@@ -1,6 +1,95 @@
 import axios, { AxiosError } from "axios";
-import { UserContent } from "@/Entity/user_content.entity.ts";
+import { UserContent, UserContentComment } from "@/Entity/user_content.entity.ts";
 import { Result } from "@/interface/common.ts";
+
+export function getReplies(commentId: string):Promise<Result<UserContentComment[]>> {
+    return new Promise((resolve, reject) => {
+        axios
+            .get("/comment/get-replies?comment_id=" + commentId)
+            .then((res) => {
+                return resolve(res.data);
+            })
+            .catch((err: AxiosError) => {
+                return reject(err.response.data);
+            });
+    });
+}
+
+
+export function likeComment( commentId:string) {
+    return new Promise((resolve, reject) => {
+        axios
+            .post("/user-content/like-comment")
+            .then((res) => {
+                return resolve(res.data);
+            })
+            .catch((err: AxiosError) => {
+                return reject(err.response.data);
+            });
+    });
+}
+
+
+export function addComment(contentId: string, content: string, parentId?: string):Promise<Result<UserContentComment>> {
+    return new Promise((resolve, reject) => {
+        axios
+            .post("/comment/add-comment",{
+                target_content_id:contentId,
+                content,
+                parent_id:parentId
+            })
+            .then((res) => {
+                return resolve(res.data);
+            })
+            .catch((err: AxiosError) => {
+                return reject(err.response.data);
+            });
+    });
+
+}
+
+
+export function shareContent(s: string) {
+    return new Promise((resolve, reject) => {
+        axios
+            .post("/user-content/share-content")
+            .then((res) => {
+                return resolve(res.data);
+            })
+            .catch((err: AxiosError) => {
+                return reject(err.response.data);
+            });
+    });
+}
+
+
+export function favoriteContent(s: string) {
+    return new Promise((resolve, reject) => {
+        axios
+            .post("/user-content/favorite-content")
+            .then((res) => {
+                return resolve(res.data);
+            })
+            .catch((err: AxiosError) => {
+                return reject(err.response.data);
+            });
+    });
+}
+
+
+export function likeContent(s: string) {
+    return new Promise((resolve, reject) => {
+        axios
+            .post("/user-content/like-content")
+            .then((res) => {
+                return resolve(res.data);
+            })
+            .catch((err: AxiosError) => {
+                return reject(err.response.data);
+            });
+    });
+}
+
 
 // 保持动态为草稿
 export function savePostContentAsDraft(data) {

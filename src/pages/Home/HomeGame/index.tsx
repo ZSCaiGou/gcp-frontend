@@ -1,46 +1,107 @@
-import { Button, Flex, message, Tabs } from "antd";
-import { Outlet, useNavigate, useParams } from "react-router";
+import { Button, Col, Flex, Image, message, Row, Tabs, TabsProps } from "antd";
+import { Outlet, useLocation, useNavigate, useParams } from "react-router";
 import CardContainer from "@/component/CardShowComponent/CardContainer.tsx";
 import { LeftOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { getGameById } from "@/api/game.api.ts";
 import { Game } from "@/Entity/game.entity.ts";
+import { useCacheStore } from "@/stores/useCacheStore.tsx";
+
+type HomeGamePageState = {
+    gameInfo: Game;
+};
 
 export default function HomeGame() {
     const navigate = useNavigate();
     const { gameId } = useParams<{ gameId: string }>();
-    const [gameInfo, setGameInfo] = useState<Game>();
+    const { getCache, setCache } = useCacheStore();
+    const cacheKey = "/home/home-game/" + gameId;
+    const [pageState, setPageState] = useState<HomeGamePageState>(
+        () =>
+            getCache(cacheKey) || {
+                gameInfo: null,
+            },
+    );
+
     useEffect(() => {
-        getGameById(gameId)
-            .then((res) => {
-                setGameInfo(res.data);
-            })
-            .catch((err) => {
-                message.error(err.message);
-            });
-    }, []);
+        // 当cacheKey状态发生变化时，更新缓存
+        setPageState(() => getCache(cacheKey) || { gameInfo: null });
+    }, [cacheKey]);
+
+    useEffect(() => {
+        // 获取缓存后，页面状态为空，重新获取游戏信息
+        if (pageState.gameInfo === null) {
+            getGameById(gameId)
+                .then((res) => {
+                    setPageState({
+                        gameInfo: res.data,
+                    });
+                })
+                .catch((err) => {
+                    message.error(err.message);
+                });
+        }
+        return () => {
+            // 页面卸载时，更新缓存
+            setCache(cacheKey, pageState, { ttl: 10 * 60 * 1000 });
+        };
+    }, [pageState]);
+    const tabsItems: TabsProps["items"] = [
+        { key: "community", label: "社区" },
+        { key: "guide", label: "攻略" },
+        { key: "news", label: "资讯" },
+        { key: "download", label: "下载" },
+    ];
     const header = (
         <>
             <Flex gap={"middle"} justify={"start"} align={"center"}>
-                <Button
-                    onClick={() => navigate(-1)}
-                    icon={<LeftOutlined />}
-                ></Button>
                 <Tabs
                     onChange={(key) => navigate(key, { replace: true })}
                     tabBarStyle={{ margin: 0 }}
+                    items={tabsItems}
                     type={"line"}
-                >
-                    <Tabs.TabPane tab="社区" key="community"></Tabs.TabPane>
-                    <Tabs.TabPane tab="攻略" key="guide"></Tabs.TabPane>
-                    <Tabs.TabPane tab="资讯" key="news"></Tabs.TabPane>
-                    <Tabs.TabPane tab="下载" key="download"></Tabs.TabPane>
-                </Tabs>
+                ></Tabs>
             </Flex>
         </>
     );
     return (
         <>
+            <CardContainer
+                header={
+                    <Button
+                        onClick={() => navigate(-1)}
+                        icon={<LeftOutlined />}
+                    >
+                        返回
+                    </Button>
+                }
+            >
+                <Row
+                    justify={"center"}
+                    align={"middle"}
+                    gutter={{ xs: 8, sm: 8, md: 16, lg: 24 }}
+                >
+                    {/*游戏图片*/}
+                    <Col md={{ span: 4 }}>
+                        <Image
+                            preview={false}
+                            className={"!h-[8em] !w-[8em]"}
+                            src={pageState.gameInfo?.game_img_url}
+                        ></Image>
+                    </Col>
+                    {/*游戏信息*/}
+                    <Col md={{ span: 16 }}>
+                        <Flex vertical={true}>
+                            <span className={"text-lg font-bold"}>
+                                {pageState.gameInfo?.title}
+                            </span>
+                            <span>{pageState.gameInfo?.description}</span>
+                        </Flex>
+                    </Col>
+                    {/*操作栏*/}
+                    <Col md={{ span: 4 }}></Col>
+                </Row>
+            </CardContainer>
             <CardContainer header={header}>
                 <></>
             </CardContainer>

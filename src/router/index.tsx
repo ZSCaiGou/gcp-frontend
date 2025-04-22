@@ -4,23 +4,27 @@ import {
     Navigate,
     ScrollRestoration,
 } from "react-router";
+import { lazy } from "react";
+
+const Login = lazy(() => import("@/pages/Login"));
+const HomeMain = lazy(() => import("@/pages/Home/HomeMain"));
+const HomeCommunity = lazy(() => import("@/pages/Home/HomeCommunity"));
+const HomeGame = lazy(() => import("@/pages/Home/HomeGame"));
+const Community = lazy(() => import("@/pages/Home/HomeGame/Community"));
+const Download = lazy(() => import("@/pages/Home/HomeGame/Download"));
+const News = lazy(() => import("@/pages/Home/HomeGame/News"));
+const Guide = lazy(() => import("@/pages/Home/HomeGame/Guide"));
+const HomePersonal = lazy(() => import("@/pages/Home/HomePersonal"));
+const Dynamic = lazy(() => import("@/pages/Home/HomePersonal/Dynamic"));
+const Upload = lazy(() => import("@/pages/Home/HomePersonal/Upload"));
+const HomeCreate = lazy(() => import("@/pages/Home/HomeCreate"));
+const PostUpload = lazy(() => import("@/pages/Home/HomeCreate/PostUpload"));
+const PostDynamic = lazy(() => import("@/pages/Home/HomeCreate/PostDynamic"));
+const PostNews = lazy(() => import("@/pages/Home/HomeCreate/PostNews"));
+const HomeContentDetail = lazy(() => import("@/pages/Home/HomeContentDetail"));
+
+import SuspenseLoader from "@/component/SuspenseLoader.tsx";
 import Home from "@/pages/Home";
-import Login from "@/pages/Login";
-import HomeMain from "@/pages/Home/HomeMain";
-import HomeCommunity from "@/pages/Home/HomeCommunity";
-import HomeGame from "@/pages/Home/HomeGame";
-import Community from "@/pages/Home/HomeGame/Community";
-import Download from "@/pages/Home/HomeGame/Download";
-import News from "@/pages/Home/HomeGame/News";
-import Guide from "@/pages/Home/HomeGame/Guide";
-import HomePersonal from "@/pages/Home/HomePersonal";
-import Dynamic from "@/pages/Home/HomePersonal/Dynamic";
-import Upload from "@/pages/Home/HomePersonal/Upload";
-import HomeCreate from "@/pages/Home/HomeCreate";
-import PostUpload from "@/pages/Home/HomeCreate/PostUpload";
-import PostDynamic from "@/pages/Home/HomeCreate/PostDynamic";
-import PostNews from "@/pages/Home/HomeCreate/PostNews";
-import HomeContentDetail from "@/pages/Home/HomeContentDetail";
 
 export const router = createBrowserRouter([
     {
@@ -52,17 +56,29 @@ export const router = createBrowserRouter([
             {
                 path: "home-main",
                 id: "home-main",
-                element: <HomeMain />,
+                element: (
+                    <SuspenseLoader>
+                        <HomeMain />
+                    </SuspenseLoader>
+                ),
             },
             {
                 path: "home-Community",
                 id: "home-Community",
-                element: <HomeCommunity />,
+                element: (
+                    <SuspenseLoader>
+                        <HomeCommunity />
+                    </SuspenseLoader>
+                ),
             },
             {
                 path: "home-personal",
                 id: "home-personal",
-                element: <HomePersonal />,
+                element: (
+                    <SuspenseLoader>
+                        <HomePersonal />
+                    </SuspenseLoader>
+                ),
                 children: [
                     {
                         index: true,
@@ -71,19 +87,31 @@ export const router = createBrowserRouter([
                     {
                         path: "dynamic",
                         id: "dynamic",
-                        element: <Dynamic />,
+                        element: (
+                            <SuspenseLoader>
+                                <Dynamic />
+                            </SuspenseLoader>
+                        ),
                     },
                     {
                         path: "upload",
                         id: "upload",
-                        element: <Upload />,
+                        element: (
+                            <SuspenseLoader>
+                                <Upload />
+                            </SuspenseLoader>
+                        ),
                     },
                 ],
             },
             {
                 path: "home-game/:gameId",
                 id: "home-game",
-                element: <HomeGame />,
+                element: (
+                    <SuspenseLoader>
+                        <HomeGame />
+                    </SuspenseLoader>
+                ),
                 children: [
                     {
                         index: true,
@@ -92,29 +120,49 @@ export const router = createBrowserRouter([
                     {
                         path: "community",
                         id: "community",
-                        element: <Community />,
+                        element: (
+                            <SuspenseLoader>
+                                <Community />
+                            </SuspenseLoader>
+                        ),
                     },
                     {
                         path: "download",
                         id: "download",
-                        element: <Download />,
+                        element: (
+                            <SuspenseLoader>
+                                <Download />
+                            </SuspenseLoader>
+                        ),
                     },
                     {
                         path: "news",
                         id: "news",
-                        element: <News />,
+                        element: (
+                            <SuspenseLoader>
+                                <News />
+                            </SuspenseLoader>
+                        ),
                     },
                     {
                         path: "guide",
                         id: "guide",
-                        element: <Guide />,
+                        element: (
+                            <SuspenseLoader>
+                                <Guide />
+                            </SuspenseLoader>
+                        ),
                     },
                 ],
             },
             {
                 path: "home-create",
                 id: "home-create",
-                element: <HomeCreate />,
+                element: (
+                    <SuspenseLoader>
+                        <HomeCreate />
+                    </SuspenseLoader>
+                ),
                 children: [
                     {
                         index: true,
@@ -125,31 +173,51 @@ export const router = createBrowserRouter([
                     {
                         path: "post-dynamic",
                         id: "post-dynamic",
-                        element: <PostDynamic />,
+                        element: (
+                            <SuspenseLoader>
+                                <PostDynamic />
+                            </SuspenseLoader>
+                        ),
                     },
                     {
                         path: "post-upload",
                         id: "post-upload",
-                        element: <PostUpload />,
+                        element: (
+                            <SuspenseLoader>
+                                <PostUpload />
+                            </SuspenseLoader>
+                        ),
                     },
                     {
                         path: "post-news",
                         id: "post-news",
-                        element: <PostNews />,
-                    }
+                        element: (
+                            <SuspenseLoader>
+                                <PostNews />
+                            </SuspenseLoader>
+                        ),
+                    },
                 ],
             },
             {
-                path:"home-content-detail/:contentId",
+                path: "home-content-detail/:contentId",
                 id: "home-content-detail",
-                element: <HomeContentDetail />,
-            }
+                element: (
+                    <SuspenseLoader>
+                        <HomeContentDetail />
+                    </SuspenseLoader>
+                ),
+            },
         ],
     },
     {
         path: "/login",
         id: "login",
-        element: <Login />,
+        element: (
+            <SuspenseLoader>
+                <Login />
+            </SuspenseLoader>
+        ),
     },
     // {
     //     path: "*",
