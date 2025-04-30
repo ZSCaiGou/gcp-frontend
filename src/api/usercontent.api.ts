@@ -195,7 +195,20 @@ export function getUserContentById(id: string):Promise<Result<UserContent | null
         axios
             .get("/user-content/get-content?id=" + id)
             .then((res) => {
+                console.log(res.data);
+                return resolve(res.data);
+            })
+            .catch((err: AxiosError) => {
+                return reject(err.response.data);
+            });
+    });
+}
 
+export function deleteUserContent(id:string):Promise<Result<string>> {
+    return new Promise((resolve, reject) => {
+        axios
+            .delete("/user-content/delete-user-content/" + id )
+            .then((res) => {
                 return resolve(res.data);
             })
             .catch((err: AxiosError) => {

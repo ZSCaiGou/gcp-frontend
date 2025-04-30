@@ -43,6 +43,8 @@ const useUserStore = create<UserState>()((set, get) => ({
         try {
             // 获取用户信息
             const resData = await getUserData();
+
+            console.log(resData);
             set({ user: resData.data });
             // 成功获取用户信息后设置为已登录状态
             set({ isLogin: true });

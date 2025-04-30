@@ -4,7 +4,9 @@ import { ConfigProvider, ThemeConfig } from "antd";
 
 import { AntdThemeDark, AntdThemeDefault } from "@/config/theme.ts";
 import { create } from "zustand/react";
-
+import zhCN from 'antd/locale/zh_CN';
+// for date-picker i18n
+import 'dayjs/locale/zh-cn';
 interface ThemeState {
     theme: ThemeConfig;
     isDark: boolean;
@@ -25,7 +27,7 @@ export const useTheme = create<ThemeState>((set) => ({
 function App() {
     const theme = useTheme((state) => state.theme);
     return (
-        <ConfigProvider theme={theme}>
+        <ConfigProvider theme={theme} locale={zhCN}>
             <RouterProvider router={router}></RouterProvider>
         </ConfigProvider>
     );

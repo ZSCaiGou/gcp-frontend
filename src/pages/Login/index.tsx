@@ -54,7 +54,7 @@ export default function Login() {
             type: loginType,
         };
         loginUser(loginData)
-            .then((res: { data: { token: string; userId: string } }) => {
+            .then((res: { data: { token: string; userId: string;role:string } }) => {
                 message.success("登录成功！");
 
                 localStorage.setItem("token", res.data.token);

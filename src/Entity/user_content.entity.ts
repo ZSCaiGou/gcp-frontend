@@ -55,7 +55,6 @@ export enum ContentStatus {
 export class UserContent {
     id: bigint;
 
-    user_id: string;
 
     game_id: number;
 
@@ -78,10 +77,10 @@ export class UserContent {
     game_tags?: Game[];
     topic_tags?: Topic[];
     isLiked: boolean;
-    likeCount: number;
-    commentCount: number;
+    like_count: number;
+    comment_count: number;
+    collect_count: number;
     isFavorited: boolean;
-    favoriteCount: number;
     user_info?: {
         id: string;
         nickname: string;

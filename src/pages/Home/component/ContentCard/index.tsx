@@ -1,4 +1,16 @@
-import { Avatar, Button, Card, Carousel, Flex, Image, Input, Tag } from "antd";
+import {
+    Avatar,
+    Button,
+    Card,
+    Carousel,
+    Flex,
+    Image,
+    Input,
+    message,
+    Modal,
+    Popover,
+    Tag,
+} from "antd";
 import React, { useEffect, useState } from "react";
 import { UserContent, UserContentType } from "@/Entity/user_content.entity.ts";
 import Element = React.JSX.Element;
@@ -7,21 +19,31 @@ import {
     PlayCircleOutlined,
     PlusOutlined,
 } from "@ant-design/icons";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
+import useUserStore from "@/stores/useUserStore.tsx";
+import { deleteUserContent } from "@/api/usercontent.api.ts";
 
 export interface ContentCardProps {
     userContent: UserContent;
     onClick: (contentId: string) => void;
     type?: "detail" | "list";
+    onDeleteContent?: (contentId: string) => void;
 }
 
 export default function ContentCard({
     userContent,
     onClick,
     type = "list",
+    onDeleteContent = () => {},
 }: ContentCardProps) {
     const [isLoading, setIsLoading] = useState(true);
     const [carouselContent, setCarouselContent] = useState<Element[]>();
+    const loginUserInfo = useUserStore((state) => state.user);
+    const [popVisible, setPopVisible] = useState(false);
+    const [confirmState, setConfirmState] = useState({
+        visible: false,
+        loading: false,
+    });
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -43,6 +65,81 @@ export default function ContentCard({
             setIsLoading(false);
         }
     }, []);
+    // 复制链接
+    const getContentLink = async () => {
+        let link = window.location.origin;
+        if (type === "detail") {
+            link = window.location.href;
+        } else if (type === "list") {
+            link += "/home/home-content-detail/" + userContent.id;
+        }
+        await navigator.clipboard.writeText(link);
+        message.success("链接已复制到剪贴板");
+        setPopVisible(false);
+    };
+
+    // 删除内容
+    function handleDeleteContent() {
+        setConfirmState({ ...confirmState, loading: true });
+        deleteUserContent(userContent.id as unknown as string)
+            .then((res) => {
+                setConfirmState({ visible: false, loading: false });
+                onDeleteContent(userContent.id as unknown as string);
+                message.success(res.message);
+            })
+            .catch((error) => {
+                setConfirmState({ visible: false, loading: false });
+                message.error(error.message);
+            });
+    }
+
+    // 列表模式下操作按钮
+    const listAciton = (
+        <Flex vertical align={"center"} justify={"end"}>
+            <Button
+                className={"w-full !font-bold"}
+                type={"text"}
+                onClick={getContentLink}
+            >
+                复制链接
+            </Button>
+            {loginUserInfo?.id === userContent.user_info.id && (
+                <>
+                    <Button
+                        className={"w-full !font-bold"}
+                        type={"text"}
+                        onClick={() => {
+                            navigate(
+                                "/home/home-content/edit/" + userContent.id,
+                            );
+                        }}
+                    >
+                        修改
+                    </Button>
+                    <Button
+                        className={"w-full !font-bold"}
+                        variant={"text"}
+                        color={"danger"}
+                        onClick={() => {
+                            setConfirmState({ ...confirmState, visible: true });
+                            setPopVisible(false);
+                        }}
+                    >
+                        删除
+                    </Button>
+                </>
+            )}
+            {loginUserInfo?.id !== userContent.user_info.id && (
+                <Button
+                    className={"w-full !font-bold"}
+                    variant={"text"}
+                    color={"danger"}
+                >
+                    举报
+                </Button>
+            )}
+        </Flex>
+    );
 
     // 头像、昵称、等级
     const avatarBar = (
@@ -73,15 +170,25 @@ export default function ContentCard({
                     </Tag>
                 </Flex>
                 {type === "list" && (
-                    <Button
-                        className={"justify-self-end"}
-                        variant={"filled"}
-                        color={"default"}
-                        type={"default"}
-                        size={"small"}
+                    <Popover
+                        trigger={"click"}
+                        placement={"bottomRight"}
+                        content={listAciton}
+                        open={popVisible}
+                        onOpenChange={(visiable) => {
+                            setPopVisible(visiable);
+                        }}
                     >
-                        ...
-                    </Button>
+                        <Button
+                            className={"justify-self-end"}
+                            variant={"filled"}
+                            color={"default"}
+                            type={"default"}
+                            size={"small"}
+                        >
+                            ...
+                        </Button>
+                    </Popover>
                 )}
                 {type === "detail" && (
                     <Button
@@ -130,6 +237,7 @@ export default function ContentCard({
             </Tag>
         );
     });
+
     return (
         <>
             <Card
@@ -156,7 +264,6 @@ export default function ContentCard({
                     <Flex justify={"center"}>
                         {carouselContent && type === "detail" && (
                             <Carousel
-
                                 className={"!bg-gray-200"}
                                 dots={true}
                                 arrows
@@ -207,7 +314,7 @@ export default function ContentCard({
                     <div
                         className={
                             type === "list"
-                                ? "max-h-[8em] cursor-pointer overflow-hidden overflow-ellipsis text-sm"
+                                ? "max-h-[8em] cursor-pointer overflow-hidden text-sm overflow-ellipsis"
                                 : ""
                         }
                         dangerouslySetInnerHTML={{
@@ -225,6 +332,31 @@ export default function ContentCard({
                     </Flex>
                 </Flex>
             </Card>
+            <Modal
+                open={confirmState.visible}
+                onCancel={() =>
+                    setConfirmState({ ...confirmState, visible: false })
+                }
+                confirmLoading={confirmState.loading}
+                onOk={handleDeleteContent}
+                centered
+                okText={"确认"}
+                cancelText={"取消"}
+                width={"15vw"}
+                closable={false}
+                footer={(_originNode, { OkBtn, CancelBtn }) => {
+                    return (
+                        <Flex justify={"center"} gap={"1em"}>
+                            <CancelBtn></CancelBtn>
+                            <OkBtn></OkBtn>
+                        </Flex>
+                    );
+                }}
+            >
+                <Flex justify={"center"} align={"center"}>
+                    <span className={"text-lg font-bold"}>确认删除</span>
+                </Flex>
+            </Modal>
         </>
     );
 }

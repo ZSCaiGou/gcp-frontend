@@ -103,8 +103,8 @@ export default function HomeContentDetail() {
                 ...prev!,
                 isLiked: !prev!.isLiked,
                 likeCount: prev!.isLiked
-                    ? prev!.likeCount - 1
-                    : prev!.likeCount + 1,
+                    ? prev!.like_count - 1
+                    : prev!.like_count + 1,
             }));
             message.success(userContent?.isLiked ? "取消点赞成功" : "点赞成功");
         } catch (err) {
@@ -144,8 +144,8 @@ export default function HomeContentDetail() {
                 ...prev!,
                 isFavorited: !prev!.isFavorited,
                 favoriteCount: prev!.isFavorited
-                    ? prev!.favoriteCount - 1
-                    : prev!.favoriteCount + 1,
+                    ? prev!.collect_count - 1
+                    : prev!.collect_count + 1,
             }));
             message.success(
                 userContent?.isFavorited ? "取消收藏成功" : "收藏成功",
@@ -190,7 +190,7 @@ export default function HomeContentDetail() {
             message.success("评论成功");
             setUserContent((prev) => ({
                 ...prev!,
-                commentCount: prev!.commentCount + 1,
+                comment_count: prev!.comment_count + 1,
             }));
         } catch (err) {
             message.error(err.message);
@@ -218,6 +218,10 @@ export default function HomeContentDetail() {
                     return comment;
                 }),
             );
+            setUserContent((prev) => ({
+                ...prev!,
+                comment_count: prev!.comment_count + 1,
+            }));
             setReplyText("");
             setReplyingTo(null);
             message.success("回复成功");
@@ -464,7 +468,7 @@ export default function HomeContentDetail() {
                                                 "relative top-[-2px] ml-1 text-xs text-gray-500"
                                             }
                                         >
-                                            {userContent?.commentCount ||
+                                            {userContent?.comment_count ||
                                                 0}{" "}
                                         </span>
                                     </>
@@ -480,7 +484,11 @@ export default function HomeContentDetail() {
                             onClick: ({ key }) => setSortType(key as SortType),
                         }}
                     >
-                        <Button type="text" size="small">
+                        <Button
+                            color={"default"}
+                            type="text"
+                            size="small"
+                        >
                             <Space>
                                 {
                                     sortItems.find(
@@ -540,7 +548,7 @@ export default function HomeContentDetail() {
                         loading={actionLoading.like}
                         onClick={handleLike}
                     >
-                        {userContent?.likeCount || 0}
+                        {userContent?.like_count || 0}
                     </Button>
 
                     <Button
@@ -555,7 +563,7 @@ export default function HomeContentDetail() {
                         loading={actionLoading.favorite}
                         onClick={handleFavorite}
                     >
-                        {userContent?.favoriteCount || 0}
+                        {userContent?.collect_count || 0}
                     </Button>
 
                     <Popover content={shareOptions} trigger="click">

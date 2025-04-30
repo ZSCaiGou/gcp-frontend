@@ -20,6 +20,15 @@ export default function Dynamic() {
                 message.error(error.message);
             });
     }, []);
+
+    const handleDeleteContent = (id: string) => {
+        setPersonDynamicContentList(
+            personDynamicContentList.filter(
+                (item) => item.id.toString() !== id,
+            )
+        );
+    };
+
     const cardList = personDynamicContentList?.map((item) => (
         <ContentCard
             onClick={() => {
@@ -27,6 +36,7 @@ export default function Dynamic() {
             }}
             key={"game-community-guide" + item.id}
             userContent={item}
+            onDeleteContent={handleDeleteContent}
         />
     ));
 

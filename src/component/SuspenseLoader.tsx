@@ -1,4 +1,5 @@
 import React from "react";
+import { Spin } from "antd";
 
 interface SuspenseLoaderProps {
     children: React.ReactNode;
@@ -6,9 +7,9 @@ interface SuspenseLoaderProps {
 
 function Loading() {
     return (
-        <>
-            loading...
-        </>
+        <div className="flex w-full h-full items-center justify-center py-2">
+            <Spin size="small" />
+        </div>
     );
 }
 

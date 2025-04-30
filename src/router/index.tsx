@@ -26,6 +26,9 @@ const HomeContentDetail = lazy(() => import("@/pages/Home/HomeContentDetail"));
 import SuspenseLoader from "@/component/SuspenseLoader.tsx";
 import Home from "@/pages/Home";
 
+import SystemAdmin from "@/pages/Admin/System";
+import CommunityAdmin from "@/pages/Admin/Community";
+
 export const router = createBrowserRouter([
     {
         path: "/",
@@ -218,6 +221,23 @@ export const router = createBrowserRouter([
                 <Login />
             </SuspenseLoader>
         ),
+    },
+    {
+        path: "/admin",
+        children: [
+            {
+                path: "system",
+                element: <SystemAdmin />,
+            },
+            {
+                path: "community",
+                element: <CommunityAdmin />,
+            },
+            {
+                index: true,
+                element: <Navigate to="/admin/system" replace />,
+            },
+        ],
     },
     // {
     //     path: "*",

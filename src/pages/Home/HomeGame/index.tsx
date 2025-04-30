@@ -80,6 +80,7 @@ export default function HomeGame() {
                     justify={"center"}
                     align={"middle"}
                     gutter={{ xs: 8, sm: 8, md: 16, lg: 24 }}
+                    className={"!w-full"}
                 >
                     {/*游戏图片*/}
                     <Col md={{ span: 4 }}>

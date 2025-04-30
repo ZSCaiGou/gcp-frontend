@@ -21,5 +21,9 @@ export default defineConfig({
         },
         host: "0.0.0.0",
         allowedHosts: ["gcpserver.natapp1.cc","hmke48.natappfree.cc"],
+        hmr:{
+            protocol: "ws",
+            host:"localhost"
+        }
     },
 });
