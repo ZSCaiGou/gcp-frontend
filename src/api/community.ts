@@ -40,13 +40,14 @@ export interface Category {
     value: string;
 }
 
-interface Moderator {
+export interface Moderator {
     id: string;
     username: string;
-    avatar?: string;
-    role: "admin" | "moderator";
+    role:  "moderator";
     addedAt: string;
+    avatar_url?: string;
 }
+
 
 interface StatsData {
     memberCount: number;
@@ -85,6 +86,12 @@ export interface Member {
     email: string;
     joinTime: string;
     status: "active" | "disabled";
+}
+export interface UserSearchResult {
+    id: string;
+    username: string;
+    avatar_url?: string;
+    email: string;
 }
 
 // 社区相关API
@@ -152,7 +159,7 @@ export const communityApi = {
     ): Promise<void> => {
         try {
             await axios.patch("/game/admin-change-community-status", {
-                ids,
+                community_ids:ids,
                 status,
             });
         } catch (error) {
@@ -163,7 +170,7 @@ export const communityApi = {
     // 批量删除社区
     batchDelete: async (ids: string[]): Promise<void> => {
         try {
-            await axios.post("/game/admin-delete-community", { ids });
+            await axios.patch("/game/admin-delete-community", { community_ids: ids });
         } catch (error) {
             throw new Error("批量删除失败");
         }
@@ -173,7 +180,7 @@ export const communityApi = {
     getModerators: async (communityId: string): Promise<Moderator[]> => {
         try {
             const response: AxiosResponse<ApiResponse<Moderator[]>> =
-                await axios.get(`/communities/${communityId}/moderators`);
+                await axios.get(`/game/admin-get-moderators/${communityId}`);
             return response.data.data;
         } catch (error) {
             throw new Error("获取版主列表失败");
@@ -199,13 +206,12 @@ export const communityApi = {
     addModerator: async (
         communityId: string,
         userId: string,
-        role: "admin" | "moderator",
     ): Promise<Moderator> => {
         try {
             const response: AxiosResponse<ApiResponse<Moderator>> =
-                await axios.post(`/communities/${communityId}/moderators`, {
-                    userId,
-                    role,
+                await axios.post(`/user/admin-add-moderator`, {
+                    user_id: userId,
+                    community_id: communityId,
                 });
             return response.data.data;
         } catch (error) {
@@ -219,8 +225,12 @@ export const communityApi = {
         moderatorId: string,
     ): Promise<void> => {
         try {
-            await axios.delete(
-                `/communities/${communityId}/moderators/${moderatorId}`,
+            await axios.patch(
+                `/user/admin-delete-moderator`,
+                {
+                    user_id: moderatorId,
+                    community_id: communityId,
+                }
             );
         } catch (error) {
             throw new Error("移除版主失败");
@@ -278,7 +288,7 @@ export const communityApi = {
         try {
             const response: AxiosResponse<
                 ApiResponse<PaginatedResponse<Member>>
-            > = await axios.get(`/communities/${communityId}/members`, {
+            > = await axios.get(`/game/admin-get-community-followers/${communityId}`, {
                 params: {
                     page: params.page,
                     pageSize: params.pageSize,
@@ -291,6 +301,19 @@ export const communityApi = {
             return response.data.data;
         } catch (error) {
             throw new Error("获取社区关注成员失败");
+        }
+    },
+    searchUsers: async (searchTerm: string): Promise<UserSearchResult[]> => {
+        try {
+            const response: AxiosResponse<ApiResponse<UserSearchResult[]>> = await axios.get(
+                "/user/admin-search-user",
+                {
+                    params: { search: searchTerm },
+                },
+            );
+            return response.data.data;
+        } catch (error) {
+            throw new Error("搜索用户失败");
         }
     },
 };

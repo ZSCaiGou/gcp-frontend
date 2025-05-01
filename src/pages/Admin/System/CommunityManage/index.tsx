@@ -420,11 +420,11 @@ const CommunityManage = () => {
                 setLoading(true);
                 const newStatus =
                     record.status === "active" ? "disabled" : "active";
-                const updated = await communityApi.updateCommunity(record.id, {
-                    status: newStatus,
-                });
+                await communityApi.batchUpdateStatus([record.id],
+                     newStatus
+                );
                 setCommunities((prev) =>
-                    prev.map((c) => (c.id === record.id ? updated : c)),
+                    prev.map((c) => (c.id === record.id ? {...c, status: newStatus} : c)),
                 );
                 message.success(
                     `社区已${newStatus === "active" ? "激活" : "停用"}`,
@@ -553,7 +553,7 @@ const CommunityManage = () => {
                                 setTableParams({
                                     pagination: { current: 1, pageSize: 10 },
                                     filters: {},
-                                    sortField: "createdAt",
+                                    sortField: null,
                                     sortOrder: "descend",
                                 });
                             }}

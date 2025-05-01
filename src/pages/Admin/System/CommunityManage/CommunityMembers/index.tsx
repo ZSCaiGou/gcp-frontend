@@ -49,7 +49,6 @@ interface TableParams {
 const CommunityMembers = ({ communityId }: Props) => {
     const [members, setMembers] = useState<Member[]>([]);
     const [loading, setLoading] = useState(false);
-    const [searchText, setSearchText] = useState("");
     const [tableParams, setTableParams] = useState<TableParams>({
         pagination: {
             current: 1,
@@ -79,7 +78,6 @@ const CommunityMembers = ({ communityId }: Props) => {
                 sortOrder: tableParams.sortOrder as "ascend" | "descend",
             };
 
-            // 实际API调用示例（需根据后端接口调整）
             const data = await communityApi.getCommunityMembers(
                 communityId,
                 params,
@@ -153,7 +151,7 @@ const CommunityMembers = ({ communityId }: Props) => {
             ),
             filters: [
                 { text: "正常", value: "active" },
-                { text: "封禁", value: "banned" },
+                { text: "封禁", value: "disabled" },
             ],
             onFilter: (value, record) => record.status === value,
         },
