@@ -95,6 +95,22 @@ export interface UserSearchResult {
 }
 
 // 社区相关API
+export interface ModeratorRequest {
+    id: string;
+    username: string;
+    community: string;
+    status: "pending" | "approved" | "rejected";
+}
+
+export interface ModeratorRequestQueryParams {
+    page?: number;
+    pageSize?: number;
+    search?: string;
+    status?: ("pending" | "approved" | "rejected")[];
+    sortField?: string;
+    sortOrder?: "ascend" | "descend";
+}
+
 export const communityApi = {
     // 分页查询社区
     getCommunities: async (
@@ -114,7 +130,7 @@ export const communityApi = {
                     sortOrder: params.sortOrder === "ascend" ? "asc" : "desc",
                 },
             });
-            console.log(response.data.data);
+
             return response.data.data;
         } catch (error) {
             throw new Error("获取社区列表失败");
@@ -316,4 +332,41 @@ export const communityApi = {
             throw new Error("搜索用户失败");
         }
     },
+
+    // 获取版主申请列表
+    getModeratorRequests: async (
+        params: ModeratorRequestQueryParams,
+    ): Promise<PaginatedResponse<ModeratorRequest>> => {
+        try {
+            const response: AxiosResponse<ApiResponse<PaginatedResponse<ModeratorRequest>>> = 
+                await axios.get("/game/admin-get-moderator-requests", {
+                    params: {
+                        page: params.page,
+                        pageSize: params.pageSize,
+                        search: params.search,
+                        status: params.status?.join(","),
+                        sortField: params.sortField,
+                        sortOrder: params.sortOrder === "ascend" ? "asc" : "desc",
+                    },
+                });
+            return response.data.data;
+        } catch (error) {
+            throw new Error("获取版主申请列表失败");
+        }
+    },
+
+    // 处理版主申请
+    handleModeratorRequest: async (
+        requestId: string, 
+        action: "approved" | "rejected"
+    ): Promise<void> => {
+        try {
+            await axios.patch("/game/admin-handle-moderator-request", {
+                request_id: requestId,
+                status: action,
+            });
+        } catch (error) {
+            throw new Error("处理版主申请失败");
+        }
+    }
 };

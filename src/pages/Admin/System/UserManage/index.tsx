@@ -97,7 +97,7 @@ const UserManage = () => {
     useEffect(() => {
         if (editingUser && editingUser.role === "MODERATOR") {
             setCommunityTransferVisible(true);
-            console.log(editingUser.managed_communities.map((c) => c.id));
+
             setTargetCommunities(
                 editingUser.managed_communities.map((c) => c.id) || [],
             );
@@ -105,7 +105,7 @@ const UserManage = () => {
             setCommunityTransferVisible(false);
         }
     }, [editingUser]);
-
+    // 当表格参数改变时重新加载用户数据
     useEffect(() => {
         if (loading.users) {
             fetchUsers();
@@ -623,12 +623,13 @@ const UserManage = () => {
     const hasSelected = selectedRowKeys.length > 0;
 
     return (
-        <div className="rounded-lg bg-white p-4">
+        <div className="rounded-lg bg-white">
             <Spin spinning={loading.users || loading.communities}>
                 <div className="mb-4 flex justify-between">
+                    {/* 搜索框 */}
                     <Form form={searchForm} layout="inline">
                         <Form.Item name="keyword" label="关键词">
-                            <Input placeholder="用户名/邮箱" allowClear />
+                            <Input placeholder="用户名" allowClear />
                         </Form.Item>
 
                         <Form.Item>
@@ -650,6 +651,7 @@ const UserManage = () => {
                         </Form.Item>
                     </Form>
                     <Space>
+                        {/* 批量操作框 */}
                         {hasSelected && (
                             <>
                                 <Button
@@ -717,7 +719,7 @@ const UserManage = () => {
                     onChange={handleTableChange}
                     scroll={{ x: 1300 }}
                 />
-
+                {/* 编辑和创建用户模态框 */}
                 <Modal
                     title={editingUser ? "编辑用户" : "添加用户"}
                     open={isModalVisible}

@@ -6,6 +6,10 @@ import { useEffect, useState } from "react";
 import { getGameById } from "@/api/game.api.ts";
 import { Game } from "@/Entity/game.entity.ts";
 import { useCacheStore } from "@/stores/useCacheStore.tsx";
+import Community from "./Community";
+import Guide from "./Guide";
+import News from "./News";
+import Download from "./Download";
 
 type HomeGamePageState = {
     gameInfo: Game;
@@ -22,6 +26,7 @@ export default function HomeGame() {
                 gameInfo: null,
             },
     );
+    const [activeTab, setActiveTab] = useState("community");
 
     useEffect(() => {
         // 当cacheKey状态发生变化时，更新缓存
@@ -47,23 +52,30 @@ export default function HomeGame() {
         };
     }, [pageState]);
     const tabsItems: TabsProps["items"] = [
-        { key: "community", label: "社区" },
-        { key: "guide", label: "攻略" },
-        { key: "news", label: "资讯" },
-        { key: "download", label: "下载" },
+        { 
+            key: "community", 
+            label: "社区",
+            children: <Community gameId={gameId} />
+        },
+        { 
+            key: "guide", 
+            label: "攻略",
+            children: <Guide gameId={gameId} />
+        },
+        { 
+            key: "news", 
+            label: "资讯",
+            children: <News gameId={gameId} />
+        },
+        { 
+            key: "download", 
+            label: "下载",
+            children: <Download gameId={gameId} />
+        },
     ];
-    const header = (
-        <>
-            <Flex gap={"middle"} justify={"start"} align={"center"}>
-                <Tabs
-                    onChange={(key) => navigate(key, { replace: true })}
-                    tabBarStyle={{ margin: 0 }}
-                    items={tabsItems}
-                    type={"line"}
-                ></Tabs>
-            </Flex>
-        </>
-    );
+
+
+
     return (
         <>
             <CardContainer
@@ -103,10 +115,15 @@ export default function HomeGame() {
                     <Col md={{ span: 4 }}></Col>
                 </Row>
             </CardContainer>
-            <CardContainer header={header}>
-                <></>
+            <CardContainer header={<></>}>
+            <Tabs
+                activeKey={activeTab}
+                onChange={(key) => setActiveTab(key)}
+                tabBarStyle={{ margin: 0 }}
+                items={tabsItems}
+                type={"line"}
+            />
             </CardContainer>
-            <Outlet context={{ gameId }}></Outlet>
         </>
     );
 }
