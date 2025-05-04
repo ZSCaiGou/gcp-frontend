@@ -217,3 +217,20 @@ export function deleteUserContent(id:string):Promise<Result<string>> {
     });
 }
 
+
+// 获取随机推荐内容
+export function getRandomUserContentList(count: number): Promise<Result<UserContent[]>> {
+    return new Promise((resolve, reject) => {
+        axios
+            .get(`/user-content/random-content?count=${count}`)
+            .then((res) => {
+                return resolve(res.data);
+            })
+            .catch((err: AxiosError) => {
+                return reject(err.response.data);
+            });
+    });
+}
+
+
+

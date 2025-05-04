@@ -1,24 +1,22 @@
 import { Button, Col, Flex, Image, Layout, Row } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { GameCPLogo } from "@/component/Logo.tsx";
 import { SearchBar } from "@/pages/Home/component/SearchBar";
 import { AvatarBar } from "@/pages/Home/component/AvatarBar";
-import { Outlet } from "react-router";
+import { Outlet, useLocation } from "react-router";
 import SiderBar from "@/pages/Home/component/SiderBar";
 import UserActionBar from "@/pages/Home/component/UserActionBar";
 import { useTheme } from "@/App.tsx";
 
 const { Header, Content, Sider } = Layout;
 
-const handleClick = () => {};
-
 export default function Home() {
-    const [loginMoal, setLoginMoal] = useState<boolean>(false);
     const isDark = useTheme((state) => state.isDark);
+  
     return (
         <>
-            <Layout className={"!h-full !p-0 !m-0"}>
+            <Layout className={"!m-0 !h-full !p-0"}>
                 {/* 头部导航栏 */}
                 <Header
                     className={isDark ? "!bg-black" : "!bg-white"}
@@ -29,18 +27,28 @@ export default function Home() {
                         height: "fit-content",
                     }}
                 >
-                    <Row align="middle" justify={"center"} className={"!h-full"}>
+                    <Row
+                        align="middle"
+                        justify={"center"}
+                        className={"!h-full"}
+                    >
                         {/* 左侧logo */}
-                        <Col  md={{span: 4, order: 0}} xs={{ span: 12, order: 1 }}>
+                        <Col
+                            md={{ span: 4, order: 0 }}
+                            xs={{ span: 12, order: 1 }}
+                        >
                             <GameCPLogo></GameCPLogo>
                         </Col>
                         {/*中间搜索栏*/}
-                        <Col md={{ span: 10, order: 1 }} xs={{ span: 24, order: 3 }}>
+                        <Col
+                            md={{ span: 10, order: 1 }}
+                            xs={{ span: 24, order: 3 }}
+                        >
                             <SearchBar></SearchBar>
                         </Col>
                         {/* 右侧头像栏 */}
                         <Col
-                            md={{ span: 4, order: 2,offset:6 }}
+                            md={{ span: 4, order: 2, offset: 6 }}
                             xs={{ span: 12, order: 2 }}
                             style={{ textAlign: "right" }}
                         >
@@ -55,15 +63,14 @@ export default function Home() {
                         <Col xs={24} md={4}>
                             <SiderBar></SiderBar>
                         </Col>
-                        {/* 中间主内容区（占16栅格） */}
-                        <Col xs={24} md={16} className={"!p-0 !m-0"}>
+
+                        <Col xs={24} md={16} className={"!m-0 !p-0"}>
                             {/*<GameCarousel />      /!* 游戏轮播推荐 *!/*/}
                             {/*<HotTopicsSection />  /!* 热门话题讨论 *!/*/}
                             {/*<ContentFeed />       /!* 动态内容流 *!/*/}
                             <Outlet />
                         </Col>
 
-                        {/* 右侧边栏区（占8栅格） */}
                         <Col xs={0} md={4}>
                             {/*<QuickAccessPanel />  /!* 快捷入口面板 *!/*/}
                             {/*<RankingList />       /!* 游戏热度排行榜 *!/*/}

@@ -2,30 +2,31 @@ import { useEffect, useState } from "react";
 import useUserStore from "@/stores/useUserStore.tsx";
 import { getUserDynamic } from "@/api/user.api.ts";
 import { UserContent } from "@/Entity/user_content.entity.ts";
-import { Flex, message } from "antd";
+import { Flex, message, Empty, Card } from "antd";
 import ContentCard from "@/pages/Home/component/ContentCard";
-import { useNavigate } from "react-router";
+import { useNavigate, useOutletContext } from "react-router";
 
 export default function Dynamic() {
     const navigate = useNavigate();
-    const userStore = useUserStore.getState();
+    const { userId } = useOutletContext<{ userId: string }>();
     const [personDynamicContentList, setPersonDynamicContentList] =
         useState<UserContent[]>();
+
     useEffect(() => {
-        getUserDynamic()
+        getUserDynamic(userId)
             .then((res) => {
                 setPersonDynamicContentList(res.data);
             })
             .catch((error) => {
                 message.error(error.message);
             });
-    }, []);
+    }, [userId]);
 
     const handleDeleteContent = (id: string) => {
         setPersonDynamicContentList(
             personDynamicContentList.filter(
                 (item) => item.id.toString() !== id,
-            )
+            ),
         );
     };
 
@@ -43,7 +44,16 @@ export default function Dynamic() {
     return (
         <>
             <Flex className={"!w-full"} gap={"middle"} align={"start"} vertical>
-                {cardList}
+                {personDynamicContentList?.length ? (
+                    cardList
+                ) : (
+                    <Card className="!w-full">
+                        <Empty
+                            description="暂无动态内容"
+                            style={{ marginTop: 48 }}
+                        />
+                    </Card>
+                )}
             </Flex>
         </>
     );

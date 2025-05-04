@@ -22,6 +22,8 @@ import useUserStore from "@/stores/useUserStore.tsx";
 import { useEffect, useState } from "react";
 import ImgCrop from "antd-img-crop";
 import { updateUserAvatar, updateUserProfile } from "@/api/user.api.ts";
+import { useParams } from "react-router";
+import { getUserById } from "@/api/user.api.ts";  // 假设有这个API
 
 // 表单值
 export interface FormValue {
@@ -54,7 +56,51 @@ const getNextLevelEx = (level: number) => {
     }
 };
 export default function HomePersonal() {
+    const { userId } = useParams<{ userId?: string }>();
     const navigate = useNavigate();
+    
+    // 当前登录用户信息
+    const currentUserInfo = useUserStore((state) => state.user);
+    // 显示的用户信息
+    const [displayUserInfo, setDisplayUserInfo] = useState(currentUserInfo);
+    const [isCurrentUser, setIsCurrentUser] = useState(true);
+    
+    // 获取用户信息
+    useEffect(() => {
+        if (userId) {
+            if (userId === currentUserInfo?.id) {
+                setDisplayUserInfo(currentUserInfo);
+                setIsCurrentUser(true);
+            } else {
+                getUserById(userId)
+                    .then(res => {
+                        setDisplayUserInfo(res.data);
+                        setIsCurrentUser(false);
+                    })
+                    .catch(err => {
+                        message.error(err.message);
+                        navigate(-1);
+                    });
+            }
+        } else {
+            setDisplayUserInfo(currentUserInfo);
+            setIsCurrentUser(true);
+        }
+    }, [userId, currentUserInfo]);
+
+    // 表单值初始化
+    useEffect(() => {
+        if (displayUserInfo) {
+            setFormData({
+                phone: displayUserInfo.phone,
+                username: displayUserInfo.username,
+                email: displayUserInfo.email,
+                nickname: displayUserInfo.profile.nickname,
+                signature: displayUserInfo.profile.bio?.signature,
+            });
+            setUploadAvatarUrl(displayUserInfo.profile.avatar_url);
+        }
+    }, [displayUserInfo]);
 
     const userInfo = useUserStore((state) => state.user);
     const [editForm] = Form.useForm();
@@ -68,14 +114,13 @@ export default function HomePersonal() {
     const [formData, setFormData] = useState<FormValue>();
 
     // 保存修改
+    // 修改handleSaveProfile函数，只检查昵称和签名是否有变化
     function handleSaveProfile() {
         const newFormData = editForm.getFieldsValue();
         let isDataChanged = false;
-        // 判读是否有修改
+        // 只检查昵称和签名是否有修改
         if (
             !(
-                userInfo.username === newFormData.username &&
-                userInfo.email === newFormData.email &&
                 userInfo.profile.nickname === newFormData.nickname &&
                 userInfo.profile.bio?.signature === newFormData.signature
             )
@@ -101,7 +146,7 @@ export default function HomePersonal() {
             console.log(uploadAvatarFile);
             // 上传头像
             const avatarFormData = new FormData();
-
+    
             avatarFormData.append(
                 "avatar",
                 uploadAvatarFile as unknown as File,
@@ -127,7 +172,6 @@ export default function HomePersonal() {
         }
     }
 
-    function handleSaveAvatar() {}
 
     // 表单值初始化
     useEffect(() => {
@@ -198,7 +242,7 @@ export default function HomePersonal() {
                         <Flex gap={"0.5rem"} className={"flex-1"}>
                             <Avatar
                                 size={48}
-                                src={userInfo.profile.avatar_url}
+                                src={displayUserInfo.profile.avatar_url}
                                 icon={<UserOutlined />}
                             ></Avatar>
                             <Flex vertical>
@@ -378,7 +422,18 @@ export default function HomePersonal() {
                     <Form.Item
                         name="phone"
                         label="手机号"
-                        rules={[{ message: "请输入手机号" }]}
+                    >
+                        <Input disabled />
+                    </Form.Item>
+                    <Form.Item
+                        name="username"
+                        label="用户名"
+                    >
+                        <Input disabled />
+                    </Form.Item>
+                    <Form.Item
+                        name="email"
+                        label="邮箱"
                     >
                         <Input disabled />
                     </Form.Item>
@@ -389,21 +444,6 @@ export default function HomePersonal() {
                     >
                         <Input />
                     </Form.Item>
-                    <Form.Item
-                        name="username"
-                        label="用户名"
-                        rules={[{ message: "请输入昵称" }]}
-                    >
-                        <Input />
-                    </Form.Item>
-                    <Form.Item
-                        name="email"
-                        label="邮箱"
-                        rules={[{ message: "请输入邮箱" }]}
-                    >
-                        <Input />
-                    </Form.Item>
-
                     <Form.Item
                         name="signature"
                         label="个性签名"
@@ -419,7 +459,7 @@ export default function HomePersonal() {
             <CardContainer header={contentHeader}>
                 <></>
             </CardContainer>
-            <Outlet />
+            <Outlet context={{ userId: userId || currentUserInfo?.id }} />
         </>
     );
 }

@@ -134,21 +134,6 @@ export default function PostUpload() {
     return (
         <>
             <Flex vertical gap={"1em"} className={"w-full p-2"}>
-                <Select
-                    defaultValue={contentType}
-                    onChange={(e) => {
-                        setContentType(e as UserContentType);
-                    }}
-                    className={"w-1/5"}
-                    variant={"filled"}
-                >
-                    <Select.Option value={UserContentType.GUIDE}>
-                        攻略
-                    </Select.Option>
-                    <Select.Option value={UserContentType.RESOURCE}>
-                        资源
-                    </Select.Option>
-                </Select>
                 <Flex align={"center"}>
                     <Button variant={"text"} type={"text"} color={"default"}>
                         封面：
@@ -202,12 +187,12 @@ export default function PostUpload() {
                     <Flex gap={"0"} vertical>
                         <span className={"font-bold"}>关联社区</span>
                         <span className={"text-xs"}>
-                            {gameTags.length + "/2"}{" "}
+                            {gameTags.length + "/1"}{" "}
                         </span>
                     </Flex>
                     <Flex>
                         {gameTagList}
-                        {gameTags.length >= 2 ? null : (
+                        {gameTags.length >= 1 ? null : (
                             <Button
                                 className={"!h-[2.5em] !font-thin"}
                                 size={"small"}

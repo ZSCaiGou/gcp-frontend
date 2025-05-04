@@ -1,6 +1,5 @@
 import axios from "axios";
 import type { AxiosResponse } from "axios";
-import { Result } from "@/interface/common.ts";
 
 // 类型定义
 export interface AdminCommunity {
@@ -133,7 +132,7 @@ export const communityApi = {
 
             return response.data.data;
         } catch (error) {
-            throw new Error("获取社区列表失败");
+            throw new Error(error.response.data.message);
         }
     },
 

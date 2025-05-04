@@ -1,22 +1,24 @@
 import { useEffect, useState } from "react";
 import { UserContent } from "@/Entity/user_content.entity.ts";
-import { useNavigate } from "react-router";
+import { useNavigate, useOutletContext } from "react-router";
 import { getUserUpload } from "@/api/user.api.ts";
-import { Flex, message } from "antd";
+import { Flex, message, Empty, Card } from "antd";
 import ContentCard from "@/pages/Home/component/ContentCard";
 
 export default function Upload() {
     const [uploadContentList, setUploadContentList] = useState<UserContent[]>();
     const navigate = useNavigate();
+    const { userId } = useOutletContext<{ userId: string }>();
+    
     useEffect(() => {
-        getUserUpload()
+        getUserUpload(userId)
             .then((res) => {
                 setUploadContentList(res.data);
             })
             .catch((err) => {
                 message.error(err.message);
             });
-    }, []);
+    }, [userId]);
 
     const cardList = uploadContentList?.map((item) => (
         <ContentCard
@@ -31,7 +33,14 @@ export default function Upload() {
     return (
         <>
             <Flex className={"!w-full"} gap={"middle"} align={"start"} vertical>
-                {cardList}
+                {uploadContentList?.length ? cardList : (
+                    <Card className="!w-full">
+                        <Empty 
+                        description="暂无上传内容"
+                        style={{ marginTop: 48 }}
+                    />
+                    </Card>
+                )}
             </Flex>
         </>
     );

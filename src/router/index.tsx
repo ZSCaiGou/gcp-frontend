@@ -15,6 +15,7 @@ const Download = lazy(() => import("@/pages/Home/HomeGame/Download"));
 const News = lazy(() => import("@/pages/Home/HomeGame/News"));
 const Guide = lazy(() => import("@/pages/Home/HomeGame/Guide"));
 const HomePersonal = lazy(() => import("@/pages/Home/HomePersonal"));
+const HomeSecurity = lazy(() => import("@/pages/Home/SafeCenter"));
 const Dynamic = lazy(() => import("@/pages/Home/HomePersonal/Dynamic"));
 const Upload = lazy(() => import("@/pages/Home/HomePersonal/Upload"));
 const HomeCreate = lazy(() => import("@/pages/Home/HomeCreate"));
@@ -22,6 +23,7 @@ const PostUpload = lazy(() => import("@/pages/Home/HomeCreate/PostUpload"));
 const PostDynamic = lazy(() => import("@/pages/Home/HomeCreate/PostDynamic"));
 const PostNews = lazy(() => import("@/pages/Home/HomeCreate/PostNews"));
 const HomeContentDetail = lazy(() => import("@/pages/Home/HomeContentDetail"));
+const MessageNotification = lazy(() => import("@/pages/Home/MessageNotification"));
 
 import SuspenseLoader from "@/component/SuspenseLoader.tsx";
 import Home from "@/pages/Home";
@@ -39,9 +41,7 @@ export const router = createBrowserRouter([
         id: "home",
         element: (
             <>
-                <ScrollRestoration
-                    getKey={(location) => location.pathname} // 按路径区分滚动位置
-                />
+                <ScrollRestoration getKey={(location) => location.pathname} />
                 <Home />
             </>
         ),
@@ -115,48 +115,7 @@ export const router = createBrowserRouter([
                         <HomeGame />
                     </SuspenseLoader>
                 ),
-                children: [
-                    {
-                        index: true,
-                        element: <Navigate to={"community"} replace></Navigate>,
-                    },
-                    {
-                        path: "community",
-                        id: "community",
-                        element: (
-                            <SuspenseLoader>
-                                <Community />
-                            </SuspenseLoader>
-                        ),
-                    },
-                    {
-                        path: "download",
-                        id: "download",
-                        element: (
-                            <SuspenseLoader>
-                                <Download />
-                            </SuspenseLoader>
-                        ),
-                    },
-                    {
-                        path: "news",
-                        id: "news",
-                        element: (
-                            <SuspenseLoader>
-                                <News />
-                            </SuspenseLoader>
-                        ),
-                    },
-                    {
-                        path: "guide",
-                        id: "guide",
-                        element: (
-                            <SuspenseLoader>
-                                <Guide />
-                            </SuspenseLoader>
-                        ),
-                    },
-                ],
+                
             },
             {
                 path: "home-create",
@@ -208,6 +167,24 @@ export const router = createBrowserRouter([
                 element: (
                     <SuspenseLoader>
                         <HomeContentDetail />
+                    </SuspenseLoader>
+                ),
+            },
+            {
+                path: "home-security",
+                id: "home-security",
+                element: (
+                    <SuspenseLoader>
+                        <HomeSecurity />
+                    </SuspenseLoader>
+                ),
+            },
+            {
+                path: "home-message",
+                id: "home-message",
+                element: (
+                    <SuspenseLoader>
+                        <MessageNotification />
                     </SuspenseLoader>
                 ),
             },

@@ -24,7 +24,7 @@ import useUserStore from "@/stores/useUserStore.tsx";
 
 export default function Login() {
     const { token } = theme.useToken();
-    const [loginType, setLoginType] = useState<LoginType>("phone");
+    const [loginType, setLoginType] = useState<LoginType>("verifyCode");
     const initUser = useUserStore((state) => state.initUser);
     const userInfo = useUserStore((state) => state.user);
     const navigate = useNavigate();
@@ -43,32 +43,32 @@ export default function Login() {
         const { username, password } = values;
         // 登录逻辑
         // 如果用户名中包含@，则认为是邮箱登录，否则认为是用户名登录
-        if (username !== "phone") {
-            if (username.includes("@")) {
-                setLoginType("email");
-            }
-        }
+
         const loginData: LoginUserDto = {
             account: username,
             password: password,
             type: loginType,
         };
         loginUser(loginData)
-            .then((res: { data: { token: string; userId: string;role:string } }) => {
-                message.success("登录成功！");
+            .then(
+                (res: {
+                    data: { token: string; userId: string; role: string };
+                }) => {
+                    message.success("登录成功！");
 
-                localStorage.setItem("token", res.data.token);
+                    localStorage.setItem("token", res.data.token);
 
-                initUser();
-                navigate("/", { replace: true });
-            })
+                    initUser();
+                    navigate("/", { replace: true });
+                },
+            )
             .catch((err) => {
                 message.error(err.message);
             });
     };
     // 获取验证码
-    const handleGetCaptcha = (phone: string) => {
-        getVerifyCode(phone)
+    const handleGetCaptcha = (email: string) => {
+        getVerifyCode(email)
             .then((res) => {
                 message.success("验证码发送成功！");
             })
@@ -84,14 +84,10 @@ export default function Login() {
                     subTitle="游戏玩家社区平台"
                     actions={
                         <Space>
-                            {/*其他登录方式*/}
-                            {/*<AlipayCircleOutlined onClick={()=>{message.success("支付宝登录")}} style={iconStyles} />*/}
-                            {/*<TaobaoCircleOutlined style={iconStyles} />*/}
-                            {/*<WeiboCircleOutlined style={iconStyles} />*/}
-                            {loginType === "phone" && (
+                            {loginType === "verifyCode" && (
                                 <>
                                     <Button variant="text" color={"default"}>
-                                        未绑定手机号，将会自动注册
+                                        未绑定邮箱号，将会自动注册
                                     </Button>
                                 </>
                             )}
@@ -106,10 +102,10 @@ export default function Login() {
                             setLoginType(activeKey as LoginType)
                         }
                     >
-                        <Tabs.TabPane key={"phone"} tab={"手机号登录"} />
+                        <Tabs.TabPane key={"verifyCode"} tab={"验证码登录"} />
                         <Tabs.TabPane key={"username"} tab={"账号密码登录"} />
                     </Tabs>
-                    {loginType !== "phone" && (
+                    {loginType === "username" && (
                         <>
                             <ProFormText
                                 name="username"
@@ -149,7 +145,7 @@ export default function Login() {
                             />
                         </>
                     )}
-                    {loginType === "phone" && (
+                    {loginType === "verifyCode" && (
                         <>
                             <ProFormText
                                 fieldProps={{
@@ -161,16 +157,16 @@ export default function Login() {
                                     ),
                                 }}
                                 name="username"
-                                placeholder={"手机号"}
+                                placeholder={"邮箱号"}
                                 rules={[
                                     {
                                         required: true,
-                                        message: "请输入手机号！",
+                                        message: "请输入邮箱号！",
                                     },
                                     {
-                                        pattern: /^1\d{10}$/,
-                                        message: "手机号格式错误！",
-                                    },
+                                        type: "email",
+                                        message: "请输入正确的邮箱号！",
+                                    }
                                 ]}
                             />
                             <ProFormCaptcha

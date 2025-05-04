@@ -5,7 +5,7 @@ import {
     UserContentType,
 } from "@/Entity/user_content.entity.ts";
 
-export type LoginType = "phone" | "username" | "email";
+export type LoginType = "verifyCode" | "username" ;
 
 export interface LoginUserDto {
     account: string;
@@ -21,6 +21,7 @@ export interface UserStoreState {
     profile: UserProfile;
     level: UserLevel;
     roles: string[];
+    is_default_password: boolean;
 }
 
 export interface Bio {

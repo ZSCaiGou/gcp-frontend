@@ -188,12 +188,12 @@ export default function PostDynamic() {
                     <Flex gap={"0"} vertical>
                         <span className={"font-bold"}>关联社区</span>
                         <span className={"text-xs"}>
-                            {gameTags.length + "/2"}{" "}
+                            {gameTags.length + "/1"}{" "}
                         </span>
                     </Flex>
                     <Flex>
                         {gameTagList}
-                        {gameTags.length >= 2 ? null : (
+                        {gameTags.length >= 1 ? null : (
                             <Button
                                 className={"!h-[2.5em] !font-thin"}
                                 size={"small"}

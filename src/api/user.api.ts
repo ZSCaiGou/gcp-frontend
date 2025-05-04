@@ -20,10 +20,10 @@ export function loginUser(data: LoginUserDto): Promise<unknown> {
 }
 
 // 获取验证码
-export function getVerifyCode(phone: string): Promise<unknown> {
+export function getVerifyCode(email: string): Promise<unknown> {
     return new Promise((resolve, reject) => {
         axios
-            .get("/user/getVerifyCode?phone=" + phone)
+            .get("/user/getVerifyCode?email=" + email)
             .then((res) => {
                 return resolve(res.data);
             })
@@ -80,10 +80,10 @@ export function updateUserAvatar(data: FormData): Promise<Result<null>> {
 }
 
 // 获取用户动态
-export function getUserDynamic(): Promise<Result<UserContent[]>> {
+export function getUserDynamic(userId: string): Promise<Result<UserContent[]>> {
     return new Promise((resolve, reject) => {
         axios
-            .get("/user/dynamic")
+            .get("/user/dynamic/" + userId)
             .then((res) => {
                 return resolve(res.data);
             })
@@ -94,10 +94,24 @@ export function getUserDynamic(): Promise<Result<UserContent[]>> {
 }
 
 // 获取用户上传
-export function getUserUpload(): Promise<Result<UserContent[]>> {
+export function getUserUpload(userId: string): Promise<Result<UserContent[]>> {
     return new Promise((resolve, reject) => {
         axios
-            .get("/user/upload")
+            .get("/user/upload/" + userId)
+            .then((res) => {
+                return resolve(res.data);
+            })
+            .catch((err: AxiosError) => {
+                console.log(err);
+                return reject(err.response.data);
+            });
+    });
+}
+
+export function getUserById(userId: string): Promise<Result<UserStoreState>> {
+    return new Promise((resolve, reject) => {
+        axios
+            .get("/user/get-user-by-id/" + userId)
             .then((res) => {
                 return resolve(res.data);
             })
@@ -224,7 +238,10 @@ const api = {
         status: "active" | "disabled",
     ): Promise<void> => {
         try {
-            await axios.patch("/user/admin-change-user-status", { userIds, status });
+            await axios.patch("/user/admin-change-user-status", {
+                userIds,
+                status,
+            });
         } catch (error) {
             throw new Error("批量更新用户状态失败");
         }
