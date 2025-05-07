@@ -29,15 +29,13 @@ export default function News({ gameId }: NewsProps) {
             setLoading(true);
             const res = await getGameCommunityNewsContentList(
                 gameId, 
-                pagination.current,
-                pagination.pageSize,
-                searchText
+
             );
-            setNewsContentList(res.data.items);
-            setPagination(prev => ({
-                ...prev,
-                total: res.data.total
-            }));
+            setNewsContentList(res.data);
+            // setPagination(prev => ({
+            //     ...prev,
+            //     total: res.data.total
+            // }));
         } catch (error) {
             message.error('加载资讯失败');
         } finally {

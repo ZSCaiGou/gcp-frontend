@@ -735,7 +735,7 @@ const UserManage = () => {
                         onValuesChange={(_changedValues, values) => {
                             if (values.role === "MODERATOR") {
                                 setTargetCommunities(
-                                    editingUser.managed_communities.map(
+                                    editingUser?.managed_communities.map(
                                         (c) => c.id,
                                     ) || [],
                                 );

@@ -38,6 +38,11 @@ export default function SiderBar() {
             label: "社区",
             icon: <ProductOutlined />,
         },
+        {
+            key: "HomeAttention",
+            label:"关注",
+            icon: <ProductOutlined />,
+        }
     ];
 
     // 菜单选中时触发
