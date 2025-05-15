@@ -13,6 +13,8 @@ import {
     Modal,
     Form,
     message,
+    Col,
+    Row,
 } from "antd";
 import {
     UserOutlined,
@@ -28,17 +30,17 @@ import type { TabsProps } from "antd";
 import { useState } from "react";
 import UserManage from "@/pages/Admin/System/UserManage";
 import CommunityManage from "@/pages/Admin/System/CommunityManage";
-import RequestManage from './RequestManage';
-
+import RequestManage from "./RequestManage";
+import { useEffect } from "react";
+import SystemDataAnalytics from "./SystemDataAnalystics";
+import { useNavigate } from "react-router";
 const { Header, Content } = Layout;
 const { Search } = Input;
 const { Option } = Select;
 
 const SystemAdmin = () => {
     const [activeTab, setActiveTab] = useState("users");
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    const [selectedCommunity, setSelectedCommunity] = useState("");
-    const [form] = Form.useForm();
+    const navigate = useNavigate();
 
     const items: TabsProps["items"] = [
         {
@@ -79,7 +81,7 @@ const SystemAdmin = () => {
                     数据分析
                 </span>
             ),
-            children: <div>系统数据分析内容</div>,
+            children: <SystemDataAnalytics/>,
         },
         {
             key: "logs",
@@ -103,7 +105,9 @@ const SystemAdmin = () => {
                     <Badge count={5}>
                         <Button icon={<AuditOutlined />}>系统通知</Button>
                     </Badge>
-                    <Button type="text">退出</Button>
+                    <Button onClick={()=>{
+                        navigate("/", { replace: true });
+                    }} type="text">退出</Button>
                 </Space>
             </Header>
             <Content className="m-4">

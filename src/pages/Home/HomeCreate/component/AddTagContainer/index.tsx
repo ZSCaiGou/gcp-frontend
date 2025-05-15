@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { Game } from "@/Entity/game.entity.ts";
 import { Topic } from "@/Entity/topic.entity.ts";
-import { Flex, Input, message, Image } from "antd";
+import { Flex, Input, message, Image, Button, Modal } from "antd";
 import { getGameTags } from "@/api/game.api.ts";
 import { getTopicTags } from "@/api/topic.api.ts";
 
@@ -16,7 +16,7 @@ export default function AddTagContainer({
 }) {
     const [searchKey, setSearchKey] = useState<string>();
     const [defaultTags, setDefaultTags] = useState<Game[] | Topic[]>([]);
-
+    const [addTagModalVisible, setAddTagModalVisible] = useState(false);
     const searchBar = (
         <Input variant={"filled"} placeholder={"搜索" + addType}></Input>
     );
@@ -122,9 +122,34 @@ export default function AddTagContainer({
         });
         return (
             <>
-                <Flex>{searchBar}</Flex>
+                <Flex gap={"middle"} justify="space-between">
+                    {searchBar}{" "}
+                    <Button
+                        onClick={() => {
+                            setAddTagModalVisible(true);
+                        }}
+                    >
+                        添加话题
+                    </Button>
+                </Flex>
                 <div className={"mt-4"}></div>
                 <Flex vertical>{tagList}</Flex>
+
+                <Modal
+                    title={"添加话题"}
+                    open={addTagModalVisible}
+                    onOk={() => {}}
+                    onCancel={() => {
+                        setAddTagModalVisible(false);
+                    }}
+                >
+                    <Input
+                        placeholder={"请输入话题名称"}
+                        onChange={(e) => {
+                            setSearchKey(e.target.value);
+                        }}
+                    />
+                </Modal>
             </>
         );
     }

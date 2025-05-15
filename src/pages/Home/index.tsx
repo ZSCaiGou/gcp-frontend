@@ -48,7 +48,7 @@ export default function Home() {
                         </Col>
                         {/* 右侧头像栏 */}
                         <Col
-                            md={{ span: 4, order: 2, offset: 6 }}
+                            md={{ span: 6, order: 2, offset: 4 }}
                             xs={{ span: 12, order: 2 }}
                             style={{ textAlign: "right" }}
                         >

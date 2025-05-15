@@ -52,29 +52,27 @@ export default function HomeGame() {
         };
     }, [pageState]);
     const tabsItems: TabsProps["items"] = [
-        { 
-            key: "community", 
+        {
+            key: "community",
             label: "社区",
-            children: <Community gameId={gameId} />
+            children: <Community gameId={gameId} />,
         },
-        { 
-            key: "guide", 
+        {
+            key: "guide",
             label: "攻略",
-            children: <Guide gameId={gameId} />
+            children: <Guide gameId={gameId} />,
         },
-        { 
-            key: "news", 
+        {
+            key: "news",
             label: "资讯",
-            children: <News gameId={gameId} />
+            children: <News gameId={gameId} />,
         },
-        { 
-            key: "download", 
+        {
+            key: "download",
             label: "下载",
-            children: <Download gameId={gameId} />
+            children: <Download gameId={gameId} />,
         },
     ];
-
-
 
     return (
         <>
@@ -116,13 +114,28 @@ export default function HomeGame() {
                 </Row>
             </CardContainer>
             <CardContainer header={<></>}>
-            <Tabs
-                activeKey={activeTab}
-                onChange={(key) => setActiveTab(key)}
-                tabBarStyle={{ margin: 0 }}
-                items={tabsItems}
-                type={"line"}
-            />
+                <Tabs
+                    activeKey={activeTab}
+                    onChange={(key) => setActiveTab(key)}
+                    tabBarStyle={{ margin: 0 }}
+                    items={tabsItems}
+                    type={"line"}
+                    rootClassName="!w-full"
+                    tabBarExtraContent={
+                        <>
+                            <Button
+                                type="primary"
+                                onClick={() =>
+                                    navigate(
+                                        `/home/home-create/post-dynamic?gameId=${gameId}`,
+                                    )
+                                }
+                            >
+                                发布新帖
+                            </Button>
+                        </>
+                    }
+                />
             </CardContainer>
         </>
     );

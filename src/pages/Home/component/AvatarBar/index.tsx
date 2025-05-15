@@ -41,11 +41,12 @@ export function AvatarBar() {
             {isLogin ? (
                 <Flex align="center" gap={16}>
                     <Badge count={5} size="small">
-                        <MailOutlined 
-                            style={{ fontSize: 20, cursor: 'pointer' }}
-                            onClick={() => navigate('home-message')}
+                        <MailOutlined
+                            style={{ fontSize: 20, cursor: "pointer" }}
+                            onClick={() => navigate("home-message")}
                         />
                     </Badge>
+
                     <Dropdown menu={{ items }} trigger={["click"]}>
                         <Flex
                             className={"cursor-pointer"}
@@ -57,8 +58,15 @@ export function AvatarBar() {
                                 src={userInfo.profile.avatar_url}
                                 icon={<UserOutlined />}
                             ></Avatar>
-                            <div className={"ml-2 text-[14px] font-bold"}>
-                                {userInfo.profile.nickname || userInfo.username}
+                            <div
+                                className={
+                                    "ml-2 flex items-center justify-between text-[14px] font-bold"
+                                }
+                            >
+                                <span className="w-fit">
+                                    {userInfo.profile.nickname ||
+                                        userInfo.username}
+                                </span>
                                 <Tag
                                     color={"gold-inverse"}
                                     bordered={false}
@@ -69,6 +77,19 @@ export function AvatarBar() {
                             </div>
                         </Flex>
                     </Dropdown>
+                    {userInfo.roles[0] !== "USER" && (
+                        <Button type="primary" onClick={()=>{
+                            if(userInfo.roles[0] === "MODERATOR"){
+                                navigate("/admin/community")
+                            }else{
+                                navigate("/admin/system")
+                            }
+                        }}>
+                            {userInfo.roles[0] === "MODERATOR"
+                                ? "版主管理"
+                                : "系统管理"}
+                        </Button>
+                    )}
                 </Flex>
             ) : (
                 <Button onClick={() => navigate("/login")}>登录</Button>

@@ -27,6 +27,7 @@ import ContentReview from "./ContentReview";
 import ReportManage from "./ReportManage";
 import { moderatorApi, ModeratorCommunity } from "@/api/moderator.api";
 import Analytics from "./Analytics";
+import { useNavigate } from "react-router";
 
 const { Header, Content } = Layout;
 const { Search } = Input;
@@ -34,6 +35,7 @@ const { Option } = Select;
 
 const CommunityAdmin = () => {
     const [activeTab, setActiveTab] = useState("content");
+    const navigate = useNavigate();
 
     // 社区管理员管理的社区列表
     const [managedCommunities, setManagedCommunities] =
@@ -87,7 +89,14 @@ const CommunityAdmin = () => {
                     <Badge count={3}>
                         <Button icon={<FlagOutlined />}>待处理举报</Button>
                     </Badge>
-                    <Button type="text">退出</Button>
+                    <Button
+                        type="text"
+                        onClick={() => {
+                            navigate("/", { replace: true });
+                        }}
+                    >
+                        退出
+                    </Button>
                 </Space>
             </Header>
             <Content className="m-4">
