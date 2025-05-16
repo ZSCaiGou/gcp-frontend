@@ -6,11 +6,6 @@ import App from "./App.tsx";
 import "@/config/axios.config.ts";
 import { useCacheStore } from "@/stores/useCacheStore.tsx";
 
-localStorage.removeItem("app-cache")
+localStorage.removeItem("app-cache");
 
-
-createRoot(document.getElementById("root")!).render(
-
-        <App />
-
-);
+createRoot(document.getElementById("root")!).render(<App />);

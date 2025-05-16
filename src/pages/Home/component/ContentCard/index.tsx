@@ -22,6 +22,7 @@ import {
 import { useLocation, useNavigate } from "react-router";
 import useUserStore from "@/stores/useUserStore.tsx";
 import { deleteUserContent } from "@/api/usercontent.api.ts";
+import { interactionApi } from "@/api/interaction.api";
 
 export interface ContentCardProps {
     userContent: UserContent;
@@ -47,23 +48,23 @@ export default function ContentCard({
     const navigate = useNavigate();
 
     useEffect(() => {
-        setCarouselContent(
-            userContent.picture_urls?.map((image) => (
-                <div key={image} className={"text-center"}>
-                    <Image
-                        key={image}
-                        src={image}
-                        preview={{
-                            mask: <div></div>,
-                        }}
-                        className={"max-h-[24em] !w-full !rounded-md"}
-                    ></Image>
-                </div>
-            )),
-        );
-        if (ContentCard.length > 0) {
-            setIsLoading(false);
+        if (type === "detail") {
+            setCarouselContent(
+                userContent.picture_urls?.map((image) => (
+                    <div key={image} className={"text-center"}>
+                        <Image
+                            key={image}
+                            src={image}
+                            preview={{
+                                mask: <div></div>,
+                            }}
+                            className={"max-h-[24em] !w-full !rounded-md"}
+                        ></Image>
+                    </div>
+                )),
+            );
         }
+        setIsLoading(false);
     }, []);
     // 复制链接
     const getContentLink = async () => {
@@ -92,7 +93,24 @@ export default function ContentCard({
                 message.error(error.message);
             });
     }
-
+    const handleFocusUser = async () => {
+        if (!loginUserInfo?.id) {
+            message.error("请先登录！");
+            return;
+        }
+        if (userContent.user_info.id === loginUserInfo.id) {
+            message.error("不能关注自己！");
+            return;
+        }
+        // TODO: 关注用户
+        try {
+            const data = await interactionApi.focusUser(
+                userContent.user_info.id,
+            );
+        } catch (error) {
+            message.error(error.message);
+        }
+    };
     // 列表模式下操作按钮
     const listAciton = (
         <Flex vertical align={"center"} justify={"end"}>
@@ -196,6 +214,7 @@ export default function ContentCard({
                         type={"primary"}
                         size={"small"}
                         icon={<PlusOutlined />}
+                        onClick={handleFocusUser}
                     >
                         关注
                     </Button>
@@ -237,14 +256,15 @@ export default function ContentCard({
             </Tag>
         );
     });
-
+    if (isLoading) {
+        return <Card className={"!w-full"} loading={true}></Card>;
+    }
     return (
         <>
             <Card
                 className={
                     "!w-full" + (type === "detail" ? " !rounded-b-none" : "")
                 }
-                loading={isLoading}
                 type={"inner"}
             >
                 {type === "detail" && (
@@ -280,7 +300,7 @@ export default function ContentCard({
                         className={"!max-h-[24em] !w-full px-8"}
                     >
                         {
-                            // 列表模式下
+                            // 详细模式下封面图
                             type === "detail" &&
                                 (userContent.type === UserContentType.GUIDE ||
                                     userContent.type ===

@@ -292,12 +292,12 @@ export default function HomeContentDetail() {
             <Button type="text" block>
                 复制链接
             </Button>
-            <Button type="text" block>
+            {/* <Button type="text" block>
                 分享到微信
             </Button>
             <Button type="text" block>
                 分享到微博
-            </Button>
+            </Button> */}
         </div>
     );
     // 排序选项
@@ -484,11 +484,7 @@ export default function HomeContentDetail() {
                             onClick: ({ key }) => setSortType(key as SortType),
                         }}
                     >
-                        <Button
-                            color={"default"}
-                            type="text"
-                            size="small"
-                        >
+                        <Button color={"default"} type="text" size="small">
                             <Space>
                                 {
                                     sortItems.find(

@@ -107,7 +107,7 @@ export function getUserUpload(userId: string): Promise<Result<UserContent[]>> {
             });
     });
 }
-
+// 获取用户详细
 export function getUserById(userId: string): Promise<Result<UserStoreState>> {
     return new Promise((resolve, reject) => {
         axios
@@ -133,7 +133,7 @@ export interface User {
     last_login_time?: string;
     managed_communities?: Community[];
 }
-
+// 类型定义
 export interface Community {
     id: string;
     key: string;

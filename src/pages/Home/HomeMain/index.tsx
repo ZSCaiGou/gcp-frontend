@@ -45,6 +45,7 @@ export default function HomeMain() {
         } catch (err) {
             message.error(err.message);
             setPageState((prev) => ({ ...prev, loading: false }));
+            setPageState((prev) => ({ ...prev, hasMore: false }));
         }
     }, [pageState.loading, pageState.hasMore]);
 
@@ -88,9 +89,17 @@ export default function HomeMain() {
             <Flex gap={"middle"} align={"start"} vertical>
                 {cardList}
                 {pageState.loading && (
-                    <Card>
-                        <Skeleton active />
-                    </Card>
+                    <>
+                        <Card className="!w-full">
+                            <Skeleton active />
+                        </Card>
+                        <Card className="!w-full">
+                            <Skeleton active />
+                        </Card>
+                        <Card className="!w-full">
+                            <Skeleton active />
+                        </Card>
+                    </>
                 )}
             </Flex>
         </>
