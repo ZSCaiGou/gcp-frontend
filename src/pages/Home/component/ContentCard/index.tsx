@@ -16,6 +16,7 @@ import { UserContent, UserContentType } from "@/Entity/user_content.entity.ts";
 import Element = React.JSX.Element;
 import {
     ArrowLeftOutlined,
+    LineOutlined,
     PlayCircleOutlined,
     PlusOutlined,
 } from "@ant-design/icons";
@@ -29,6 +30,7 @@ export interface ContentCardProps {
     onClick: (contentId: string) => void;
     type?: "detail" | "list";
     onDeleteContent?: (contentId: string) => void;
+    setContent?: (content: UserContent) => void;
 }
 
 export default function ContentCard({
@@ -36,6 +38,7 @@ export default function ContentCard({
     onClick,
     type = "list",
     onDeleteContent = () => {},
+    setContent = () => {},
 }: ContentCardProps) {
     const [isLoading, setIsLoading] = useState(true);
     const [carouselContent, setCarouselContent] = useState<Element[]>();
@@ -102,11 +105,22 @@ export default function ContentCard({
             message.error("不能关注自己！");
             return;
         }
-        // TODO: 关注用户
         try {
             const data = await interactionApi.focusUser(
                 userContent.user_info.id,
             );
+            if (setContent) {
+                setContent({
+                    ...userContent,
+                    user_info: {
+                        ...userContent.user_info,
+                        is_focused: !userContent.user_info.is_focused,
+                    },
+                });
+                message.success(
+                    userContent.user_info.is_focused ? "取消关注" : "关注成功",
+                );
+            }
         } catch (error) {
             message.error(error.message);
         }
@@ -208,17 +222,28 @@ export default function ContentCard({
                         </Button>
                     </Popover>
                 )}
-                {type === "detail" && (
-                    <Button
-                        className={"justify-self-end"}
-                        type={"primary"}
-                        size={"small"}
-                        icon={<PlusOutlined />}
-                        onClick={handleFocusUser}
-                    >
-                        关注
-                    </Button>
-                )}
+                {type === "detail" &&
+                    (userContent.user_info.is_focused ? (
+                        <Button
+                            className={"justify-self-end"}
+                            type={"default"}
+                            size={"small"}
+                            icon={<LineOutlined />}
+                            onClick={handleFocusUser}
+                        >
+                            取消关注
+                        </Button>
+                    ) : (
+                        <Button
+                            className={"justify-self-end"}
+                            type={"primary"}
+                            size={"small"}
+                            icon={<PlusOutlined />}
+                            onClick={handleFocusUser}
+                        >
+                            关注
+                        </Button>
+                    ))}
             </Flex>
         </>
     );

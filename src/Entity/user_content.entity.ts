@@ -86,6 +86,7 @@ export class UserContent {
         nickname: string;
         avatar_url: string;
         level: number;
+        is_focused: boolean;
     };
     comments : UserContentComment[];
 }

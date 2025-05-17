@@ -19,7 +19,10 @@ export function getReplies(commentId: string):Promise<Result<UserContentComment[
 export function likeComment( commentId:string) {
     return new Promise((resolve, reject) => {
         axios
-            .post("/user-content/like-comment")
+            .post("/communityaction/add-like",{
+                target_type:"comment",
+                target_id:commentId
+            })
             .then((res) => {
                 return resolve(res.data);
             })
@@ -63,10 +66,13 @@ export function shareContent(s: string) {
 }
 
 
-export function favoriteContent(s: string) {
+export function favoriteContent(contentId: string) {
     return new Promise((resolve, reject) => {
         axios
-            .post("/user-content/favorite-content")
+            .post("/communityaction/add-collect",{
+                target_type:"content",
+                target_id:contentId
+            })
             .then((res) => {
                 return resolve(res.data);
             })
@@ -77,10 +83,13 @@ export function favoriteContent(s: string) {
 }
 
 
-export function likeContent(s: string) {
+export function likeContent(contenId: string) {
     return new Promise((resolve, reject) => {
         axios
-            .post("/user-content/like-content")
+            .post("/communityaction/add-like",{
+                target_type:"content",
+                target_id:contenId
+            })
             .then((res) => {
                 return resolve(res.data);
             })

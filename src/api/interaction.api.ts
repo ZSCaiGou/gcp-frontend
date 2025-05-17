@@ -6,7 +6,7 @@ export const interactionApi = {
     focusUser: async (userId: string) => {
         try {
             const response: AxiosResponse<Result<null>> = await axios.post(
-                "/interaction/focus-user",
+                "/communityaction/toggle-focus-user",
                 { userId },
             );
             return response.data;
@@ -14,4 +14,5 @@ export const interactionApi = {
             throw new Error(error.response.data.message);
         }
     },
+    
 };

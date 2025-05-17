@@ -102,7 +102,7 @@ export default function HomeContentDetail() {
             setUserContent((prev) => ({
                 ...prev!,
                 isLiked: !prev!.isLiked,
-                likeCount: prev!.isLiked
+                like_count: prev!.isLiked
                     ? prev!.like_count - 1
                     : prev!.like_count + 1,
             }));
@@ -143,7 +143,7 @@ export default function HomeContentDetail() {
             setUserContent((prev) => ({
                 ...prev!,
                 isFavorited: !prev!.isFavorited,
-                favoriteCount: prev!.isFavorited
+                collect_count: prev!.isFavorited
                     ? prev!.collect_count - 1
                     : prev!.collect_count + 1,
             }));
@@ -449,6 +449,7 @@ export default function HomeContentDetail() {
                     onClick={() => {}}
                     type="detail"
                     userContent={userContent}
+                    setContent={setUserContent}
                 />
             )}
 
