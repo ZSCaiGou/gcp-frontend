@@ -10,6 +10,7 @@ import Community from "./Community";
 import Guide from "./Guide";
 import News from "./News";
 import Download from "./Download";
+import UploadResourceModal from "@/component/UploadResource";
 
 type HomeGamePageState = {
     gameInfo: Game;
@@ -27,7 +28,7 @@ export default function HomeGame() {
             },
     );
     const [activeTab, setActiveTab] = useState("community");
-
+    const [visible, setVisible] = useState(false);
     useEffect(() => {
         // 当cacheKey状态发生变化时，更新缓存
         setPageState(() => getCache(cacheKey) || { gameInfo: null });
@@ -122,9 +123,10 @@ export default function HomeGame() {
                     type={"line"}
                     rootClassName="!w-full"
                     tabBarExtraContent={
-                        <>
+                        <Flex gap={"10px"}>
                             <Button
-                                type="primary"
+                                type="link"
+                                size={"small"}
                                 onClick={() =>
                                     navigate(
                                         `/home/home-create/post-dynamic?gameId=${gameId}`,
@@ -133,10 +135,27 @@ export default function HomeGame() {
                             >
                                 发布新帖
                             </Button>
-                        </>
+                            <Button
+                                type="default"
+                                size={"small"}
+                                onClick={() => setVisible(true)}
+                            >
+                                上传资源
+                            </Button>
+                        </Flex>
                     }
                 />
             </CardContainer>
+            {pageState.gameInfo && (
+                <UploadResourceModal
+                    visible={visible}
+                    onCancel={() => setVisible(false)}
+                    onOk={() => {
+                        setVisible(false);
+                    }}
+                    game={pageState.gameInfo}
+                />
+            )}
         </>
     );
 }

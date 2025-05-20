@@ -23,7 +23,7 @@ import { useEffect, useState } from "react";
 import ImgCrop from "antd-img-crop";
 import { updateUserAvatar, updateUserProfile } from "@/api/user.api.ts";
 import { useParams } from "react-router";
-import { getUserById } from "@/api/user.api.ts";  // 假设有这个API
+import { getUserById } from "@/api/user.api.ts"; // 假设有这个API
 
 // 表单值
 export interface FormValue {
@@ -58,26 +58,27 @@ const getNextLevelEx = (level: number) => {
 export default function HomePersonal() {
     const { userId } = useParams<{ userId?: string }>();
     const navigate = useNavigate();
-    
+
     // 当前登录用户信息
     const currentUserInfo = useUserStore((state) => state.user);
     // 显示的用户信息
     const [displayUserInfo, setDisplayUserInfo] = useState(currentUserInfo);
     const [isCurrentUser, setIsCurrentUser] = useState(true);
-    
+
     // 获取用户信息
     useEffect(() => {
+        console.log("userId", userId);
         if (userId) {
             if (userId === currentUserInfo?.id) {
                 setDisplayUserInfo(currentUserInfo);
                 setIsCurrentUser(true);
             } else {
                 getUserById(userId)
-                    .then(res => {
+                    .then((res) => {
                         setDisplayUserInfo(res.data);
                         setIsCurrentUser(false);
                     })
-                    .catch(err => {
+                    .catch((err) => {
                         message.error(err.message);
                         navigate(-1);
                     });
@@ -146,7 +147,7 @@ export default function HomePersonal() {
             console.log(uploadAvatarFile);
             // 上传头像
             const avatarFormData = new FormData();
-    
+
             avatarFormData.append(
                 "avatar",
                 uploadAvatarFile as unknown as File,
@@ -171,7 +172,6 @@ export default function HomePersonal() {
             setIsEditLoading(false);
         }
     }
-
 
     // 表单值初始化
     useEffect(() => {
@@ -249,35 +249,37 @@ export default function HomePersonal() {
                                 {/* 昵称 等级 */}
                                 <Flex gap={"0.5rem"} align={"start"}>
                                     <div className={"text-xs font-bold"}>
-                                        {userInfo.profile.nickname
-                                            ? userInfo.profile.nickname
-                                            : userInfo.username}
+                                        {displayUserInfo.profile.nickname
+                                            ? displayUserInfo.profile.nickname
+                                            : displayUserInfo.username}
                                     </div>
                                     <Tag
                                         color={"gold-inverse"}
                                         bordered={false}
                                         style={{ fontSize: 10 }}
                                     >
-                                        LV.{userInfo.level.level}
+                                        LV.{displayUserInfo.level.level}
                                     </Tag>
                                 </Flex>
                                 {/* 个性签名 */}
                                 <div className={"text-xs text-gray-500"}>
-                                    {userInfo.profile.bio?.signature
-                                        ? userInfo.profile.bio.signature
+                                    {displayUserInfo.profile.bio?.signature
+                                        ? displayUserInfo.profile.bio.signature
                                         : "什么都没写"}
                                 </div>
                             </Flex>
                         </Flex>
-                        {/*  修改资料按钮 */}
+                        {/*  修改资料按钮,只有为当前用户时才显示 */}
 
-                        <Button
-                            size={"small"}
-                            className={"!text-xs !font-light"}
-                            onClick={() => setIsEdit(true)}
-                        >
-                            修改资料
-                        </Button>
+                        {isCurrentUser && (
+                            <Button
+                                size={"small"}
+                                className={"!text-xs !font-light"}
+                                onClick={() => setIsEdit(true)}
+                            >
+                                修改资料
+                            </Button>
+                        )}
                     </Flex>
 
                     {/*  等级进度  */}
@@ -295,10 +297,10 @@ export default function HomePersonal() {
                             align="center"
                         >
                             <span className="text-xs">
-                                Lv.{userInfo.level.level}
+                                Lv.{displayUserInfo.level.level}
                             </span>
                             <span className="text-xs">
-                                下一等级: Lv.{userInfo.level.level + 1}
+                                下一等级: Lv.{displayUserInfo.level.level + 1}
                             </span>
                         </Flex>
 
@@ -307,7 +309,7 @@ export default function HomePersonal() {
                             <div
                                 className="h-2.5 rounded-full bg-blue-500"
                                 style={{
-                                    width: `${Math.min(100, (userInfo.level.ex / 100) * 100)}%`,
+                                    width: `${Math.min(100, (displayUserInfo.level.ex / 100) * 100)}%`,
                                 }}
                             ></div>
                         </div>
@@ -315,10 +317,11 @@ export default function HomePersonal() {
                         {/* 经验值显示 */}
                         <Flex className="w-full" justify="space-between">
                             <span className="text-xs">
-                                {userInfo.level.ex} EXP
+                                {displayUserInfo.level.ex} EXP
                             </span>
                             <span className="text-xs">
-                                {getNextLevelEx(userInfo.level.level)} EXP
+                                {getNextLevelEx(displayUserInfo.level.level)}{" "}
+                                EXP
                             </span>
                         </Flex>
                     </Flex>
@@ -332,7 +335,9 @@ export default function HomePersonal() {
                         style={{ height: "100%" }}
                         vertical
                     >
-                        <span className={"text-xl"}>0</span>
+                        <span className={"text-xl"}>
+                            {currentUserInfo.fans_count}
+                        </span>
                         <span className={"text-xs"}>粉丝</span>
                     </Flex>
                     <Flex
@@ -342,7 +347,9 @@ export default function HomePersonal() {
                         style={{ height: "100%" }}
                         vertical
                     >
-                        <span className={"text-xl"}>0</span>
+                        <span className={"text-xl"}>
+                            {currentUserInfo.follow_count}
+                        </span>
                         <span className={"text-xs"}>关注</span>
                     </Flex>
                     <Flex
@@ -352,7 +359,9 @@ export default function HomePersonal() {
                         style={{ height: "100%" }}
                         vertical
                     >
-                        <span className={"text-xl"}>0</span>
+                        <span className={"text-xl"}>
+                            {currentUserInfo.collect_count}
+                        </span>
                         <span className={"text-xs text-gray-500"}>收藏</span>
                     </Flex>
                 </Flex>
@@ -419,22 +428,13 @@ export default function HomePersonal() {
                     initialValues={formData}
                     variant={"filled"}
                 >
-                    <Form.Item
-                        name="phone"
-                        label="手机号"
-                    >
+                    <Form.Item name="phone" label="手机号">
                         <Input disabled />
                     </Form.Item>
-                    <Form.Item
-                        name="username"
-                        label="用户名"
-                    >
+                    <Form.Item name="username" label="用户名">
                         <Input disabled />
                     </Form.Item>
-                    <Form.Item
-                        name="email"
-                        label="邮箱"
-                    >
+                    <Form.Item name="email" label="邮箱">
                         <Input disabled />
                     </Form.Item>
                     <Form.Item

@@ -6,6 +6,9 @@ import App from "./App.tsx";
 import "@/config/axios.config.ts";
 import { useCacheStore } from "@/stores/useCacheStore.tsx";
 
+import "dayjs/locale/zh-cn";
+import dayjs from "dayjs";
+dayjs.locale("zh-cn");
 localStorage.removeItem("app-cache");
 
 createRoot(document.getElementById("root")!).render(<App />);

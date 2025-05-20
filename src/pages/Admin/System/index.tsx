@@ -34,6 +34,7 @@ import RequestManage from "./RequestManage";
 import { useEffect } from "react";
 import SystemDataAnalytics from "./SystemDataAnalystics";
 import { useNavigate } from "react-router";
+
 const { Header, Content } = Layout;
 const { Search } = Input;
 const { Option } = Select;
@@ -81,18 +82,18 @@ const SystemAdmin = () => {
                     数据分析
                 </span>
             ),
-            children: <SystemDataAnalytics/>,
+            children: <SystemDataAnalytics />,
         },
-        {
-            key: "logs",
-            label: (
-                <span>
-                    <AuditOutlined />
-                    系统日志
-                </span>
-            ),
-            children: <div>系统日志内容</div>,
-        },
+        // {
+        //     key: "logs",
+        //     label: (
+        //         <span>
+        //             <AuditOutlined />
+        //             系统日志
+        //         </span>
+        //     ),
+        //     children: <div>系统日志内容</div>,
+        // },
     ];
 
     return (
@@ -102,12 +103,17 @@ const SystemAdmin = () => {
                     系统管理后台
                 </div>
                 <Space>
-                    <Badge count={5}>
-                        <Button icon={<AuditOutlined />}>系统通知</Button>
-                    </Badge>
-                    <Button onClick={()=>{
-                        navigate("/", { replace: true });
-                    }} type="text">退出</Button>
+                    {/*<Badge count={5}>*/}
+                    {/*    <Button icon={<AuditOutlined />}>系统通知</Button>*/}
+                    {/*</Badge>*/}
+                    <Button
+                        onClick={() => {
+                            navigate("/", { replace: true });
+                        }}
+                        type="text"
+                    >
+                        退出
+                    </Button>
                 </Space>
             </Header>
             <Content className="m-4">
@@ -116,11 +122,11 @@ const SystemAdmin = () => {
                         activeKey={activeTab}
                         onChange={setActiveTab}
                         items={items}
-                        tabBarExtraContent={
-                            <Button type="link" danger>
-                                系统设置
-                            </Button>
-                        }
+                        // tabBarExtraContent={
+                        //     <Button type="link" danger>
+                        //         系统设置
+                        //     </Button>
+                        // }
                     />
                 </Card>
             </Content>

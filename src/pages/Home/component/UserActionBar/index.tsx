@@ -25,10 +25,15 @@ function FastForward() {
         >
             <UserOutlined style={{ fontSize: 24, color: "orange" }} />
         </ImgCard>,
-        <ImgCard key={"zy"} size={32} title={"资源库"}>
+        <ImgCard
+            navigateTo={"/home/home-security"}
+            key={"zy"}
+            size={32}
+            title={"安全中心"}
+        >
             <DatabaseOutlined style={{ fontSize: 24, color: "skyblue" }} />
         </ImgCard>,
-        <ImgCard key={"sc"} size={32} title={"上传资源"}>
+        <ImgCard navigateTo={"/home/home-message"} key={"sc"} size={32} title={"通知中心"}>
             <FolderOpenOutlined style={{ fontSize: 24, color: "green" }} />
         </ImgCard>,
     );

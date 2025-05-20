@@ -14,3 +14,16 @@ export function getTopicTags(): Promise<Result<Topic[]>> {
             });
     });
 }
+
+export function addTopic(title:string): Promise<Result<Topic>> {
+    return new Promise((resolve, reject) => {
+        axios
+            .post("/topic/add-topic", {title:title})
+            .then((res) => {
+                return resolve(res.data);
+            })
+            .catch((err: AxiosError) => {
+                return reject(err.response.data);
+            });
+    });
+}

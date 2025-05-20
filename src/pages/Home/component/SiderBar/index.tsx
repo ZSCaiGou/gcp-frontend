@@ -38,11 +38,11 @@ export default function SiderBar() {
             label: "社区",
             icon: <ProductOutlined />,
         },
-        {
-            key: "HomeAttention",
-            label:"关注",
-            icon: <ProductOutlined />,
-        }
+        // {
+        //     key: "HomeAttention",
+        //     label:"关注",
+        //     icon: <ProductOutlined />,
+        // }
     ];
 
     // 菜单选中时触发
@@ -77,7 +77,11 @@ export default function SiderBar() {
 
             {isLogin && (
                 <Flex className={"w-full"} justify={"center"}>
-                    <Button onClick={() => navigate("home-create")} type={"primary"} className={"mt-4 w-4/5"}>
+                    <Button
+                        onClick={() => navigate("home-create")}
+                        type={"primary"}
+                        className={"mt-4 w-4/5"}
+                    >
                         发布内容
                     </Button>
                 </Flex>

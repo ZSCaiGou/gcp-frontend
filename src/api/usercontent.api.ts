@@ -1,7 +1,7 @@
 import axios, { AxiosError } from "axios";
 import { UserContent, UserContentComment } from "@/Entity/user_content.entity.ts";
 import { Result } from "@/interface/common.ts";
-
+// 获取评论列表
 export function getReplies(commentId: string):Promise<Result<UserContentComment[]>> {
     return new Promise((resolve, reject) => {
         axios
@@ -15,8 +15,8 @@ export function getReplies(commentId: string):Promise<Result<UserContentComment[
     });
 }
 
-
-export function likeComment( commentId:string) {
+// 点赞评论
+export function likeComment( commentId:string):Promise<Result<{origin_id:string}>>  {
     return new Promise((resolve, reject) => {
         axios
             .post("/communityaction/add-like",{
@@ -32,7 +32,7 @@ export function likeComment( commentId:string) {
     });
 }
 
-
+// 添加评论
 export function addComment(contentId: string, content: string, parentId?: string):Promise<Result<UserContentComment>> {
     return new Promise((resolve, reject) => {
         axios
@@ -52,10 +52,10 @@ export function addComment(contentId: string, content: string, parentId?: string
 }
 
 
-export function shareContent(s: string) {
+export function shareContent(contentId: string) {
     return new Promise((resolve, reject) => {
         axios
-            .post("/user-content/share-content")
+            .post("/communityaction/share-content")
             .then((res) => {
                 return resolve(res.data);
             })
@@ -199,10 +199,10 @@ export function getMainUserContentList():Promise<Result<UserContent[]>> {
 }
 
 // 通过id获取用户内容详情
-export function getUserContentById(id: string):Promise<Result<UserContent | null>> {
+export function getUserContentById(id: string,sortType:string):Promise<Result<UserContent | null>> {
     return new Promise((resolve, reject) => {
         axios
-            .get("/user-content/get-content?id=" + id)
+            .get("/user-content/get-content?id=" + id + "&sortType=" + sortType)
             .then((res) => {
                 console.log(res.data);
                 return resolve(res.data);

@@ -6,7 +6,7 @@ import { AntdThemeDark, AntdThemeDefault } from "@/config/theme.ts";
 import { create } from "zustand/react";
 import zhCN from "antd/locale/zh_CN";
 // for date-picker i18n
-import "dayjs/locale/zh-cn";
+
 interface ThemeState {
     theme: ThemeConfig;
     isDark: boolean;

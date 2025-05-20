@@ -9,6 +9,7 @@ import {
     message,
     Modal,
     Popover,
+    Select,
     Tag,
 } from "antd";
 import React, { useEffect, useState } from "react";
@@ -96,6 +97,8 @@ export default function ContentCard({
                 message.error(error.message);
             });
     }
+
+    // 关注用户
     const handleFocusUser = async () => {
         if (!loginUserInfo?.id) {
             message.error("请先登录！");
@@ -125,7 +128,44 @@ export default function ContentCard({
             message.error(error.message);
         }
     };
+    // 跳转到用户主页
+    const handleNavigateUser = () => {
+        navigate("/home/home-personal/" + userContent.user_info.id);
+    };
+    // 跳转到编辑页面
+    const handleNavigateEdit = () => {
+        if (userContent.type === "news") {
+            navigate("/home/edit-news/" + userContent.id);
+        } else if (userContent.type === "guide") {
+            navigate("/home/edit-upload/" + userContent.id);
+        } else if (userContent.type === "post") {
+            navigate("/home/edit-dynamic/" + userContent.id);
+        }
+    };
     // 列表模式下操作按钮
+    const [reportModalVisible, setReportModalVisible] = useState(false);
+    const [reportReason, setReportReason] = useState("");
+
+    const handleReport = () => {
+        if (!reportReason) {
+            message.error("请选择举报原因");
+            return;
+        }
+        // 这里调用举报API
+        message.success(`举报成功，原因：${reportReason}`);
+        setReportModalVisible(false);
+        setReportReason("");
+    };
+
+    const reportReasons = [
+        { label: "垃圾广告", value: "spam" },
+        { label: "不适当内容", value: "inappropriate" },
+        { label: "人身攻击", value: "harassment" },
+        { label: "灌水内容", value: "water" },
+        { label: "其他原因", value: "other" },
+    ];
+
+    // 在listAciton中修改举报按钮
     const listAciton = (
         <Flex vertical align={"center"} justify={"end"}>
             <Button
@@ -140,11 +180,7 @@ export default function ContentCard({
                     <Button
                         className={"w-full !font-bold"}
                         type={"text"}
-                        onClick={() => {
-                            navigate(
-                                "/home/home-content/edit/" + userContent.id,
-                            );
-                        }}
+                        onClick={handleNavigateEdit}
                     >
                         修改
                     </Button>
@@ -161,15 +197,16 @@ export default function ContentCard({
                     </Button>
                 </>
             )}
-            {loginUserInfo?.id !== userContent.user_info.id && (
-                <Button
-                    className={"w-full !font-bold"}
-                    variant={"text"}
-                    color={"danger"}
-                >
-                    举报
-                </Button>
-            )}
+            {/*{loginUserInfo?.id !== userContent.user_info.id && (*/}
+            {/*    <Button*/}
+            {/*        className={"w-full !font-bold"}*/}
+            {/*        variant={"text"}*/}
+            {/*        color={"danger"}*/}
+            {/*        onClick={() => setReportModalVisible(true)}*/}
+            {/*    >*/}
+            {/*        举报*/}
+            {/*    </Button>*/}
+            {/*)}*/}
         </Flex>
     );
 
@@ -186,6 +223,7 @@ export default function ContentCard({
                     className={"w-full cursor-pointer"}
                     align={"center"}
                     gap={".5em"}
+                    onClick={handleNavigateUser}
                 >
                     <div className={"text-xs font-bold"}>
                         {userContent.user_info.nickname}
@@ -401,6 +439,26 @@ export default function ContentCard({
                 <Flex justify={"center"} align={"center"}>
                     <span className={"text-lg font-bold"}>确认删除</span>
                 </Flex>
+            </Modal>
+            <Modal
+                title="举报内容"
+                open={reportModalVisible}
+                onOk={handleReport}
+                onCancel={() => {
+                    setReportModalVisible(false);
+                    setReportReason("");
+                }}
+                okText="确认举报"
+                cancelText="取消"
+            >
+                <div style={{ marginBottom: 16 }}>请选择举报原因：</div>
+                <Select
+                    style={{ width: "100%" }}
+                    placeholder="选择举报原因"
+                    options={reportReasons}
+                    value={reportReason}
+                    onChange={setReportReason}
+                />
             </Modal>
         </>
     );

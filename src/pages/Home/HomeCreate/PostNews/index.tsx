@@ -11,6 +11,7 @@ import {
     saveNewsContent,
     saveNewsContentAsDraft,
 } from "@/api/usercontent.api.ts";
+import AddTagContainer from "@/pages/Home/HomeCreate/component/AddTagContainer";
 
 export default function PostNews() {
     const [contentValue, setContentValue] = useState<string>();
@@ -25,15 +26,27 @@ export default function PostNews() {
     // 标签相关
     const [addModalVisible, setAddModalVisible] = useState(false);
     const [addType, setAddType] = useState("社区");
-    const [gameTag, setGameTag] = useState<Game>(undefined);
-
+    // 标签相关
+    const [gameTags, setGameTags] = useState<Game[]>([]);
     const handlePostUploadContent = (type: "draft" | "publish") => {
         const data = {
             title: contentTitle,
             content: contentValue,
             type: contentType,
-            game_ids: [gameTag.id],
+            game_ids: gameTags.map((game) => game.id),
         };
+        if (!contentTitle) {
+            message.error("请填写标题");
+            return;
+        }
+        if (!contentValue) {
+            message.error("请填写内容");
+            return;
+        }
+        if (gameTags.length === 0) {
+            message.error("请选择社区");
+            return;
+        }
         if (type === "draft") {
             saveNewsContentAsDraft(data)
                 .then((res) => {
@@ -55,72 +68,15 @@ export default function PostNews() {
         }
     };
 
-    // 添加标签组件
-    function AddTagContainer() {
-        const [searchKey, setSearchKey] = useState<string>();
-        const [defaultTags, setDefaultTags] = useState<Game[] | Topic[]>([]);
-
-        const searchBar = (
-            <Input variant={"filled"} placeholder={"搜索" + addType}></Input>
-        );
-
-        useEffect(() => {
-            getGameTags()
-                .then((res) => {
-                    setDefaultTags(res.data);
-                })
-                .catch((err) => {
-                    message.error(err.message);
-                });
-        }, []);
-
-        const tagList = (defaultTags as Game[]).map((tag) => {
-            return (
-                <Flex
-                    align={"center"}
-                    gap={"0.5em"}
-                    className={
-                        "h-[4em] w-full cursor-pointer rounded-md !p-4 hover:bg-gray-100"
-                    }
-                    onClick={() => {
-                        setGameTag(tag);
-                        setAddModalVisible(false);
-                    }}
-                >
-                    <Image
-                        width={"3em"}
-                        height={"3em"}
-                        src={tag.game_img_url}
-                        preview={false}
-                    />
-                    <Flex vertical>
-                        <span>{tag.title}</span>
-                        <span className={"text-xs font-thin"}>
-                            热度：{tag.hot_point}
-                        </span>
-                    </Flex>
-                </Flex>
-            );
-        });
-
-        return (
-            <>
-                <Flex>{searchBar}</Flex>
-                <div className={"mt-4"}></div>
-                <Flex vertical>{tagList}</Flex>
-            </>
-        );
-    }
-
     useEffect(() => {});
 
-    const gameTagContainer = gameTag && (
+    const gameTagContainer = gameTags[0] && (
         <Tag
-            key={gameTag.id}
+            key={gameTags[0].id}
             closable
             rootClassName={"!flex !items-center !justify-center !h-[3em]"}
             onClose={() => {
-                setGameTag(undefined);
+                setGameTags([]);
             }}
         >
             <Flex gap={"0.5em"} align={"center"}>
@@ -128,9 +84,9 @@ export default function PostNews() {
                     width={"2em"}
                     height={"2em"}
                     preview={false}
-                    src={gameTag.game_img_url}
+                    src={gameTags[0].game_img_url}
                 />
-                {gameTag.title}
+                {gameTags[0].title}
             </Flex>
         </Tag>
     );
@@ -158,12 +114,12 @@ export default function PostNews() {
                     <Flex gap={"0"} vertical>
                         <span className={"font-bold"}>关联社区</span>
                         <span className={"text-xs"}>
-                            {(gameTag ? 1 : 0) + "/1"}{" "}
+                            {(gameTags[0] ? 1 : 0) + "/1"}{" "}
                         </span>
                     </Flex>
                     <Flex>
                         {gameTagContainer}
-                        {gameTag ? null : (
+                        {gameTags.length >= 1 ? null : (
                             <Button
                                 className={"!h-[2.5em] !font-thin"}
                                 size={"small"}
@@ -180,14 +136,14 @@ export default function PostNews() {
                 </Flex>
                 {/* 保存和存草稿按钮*/}
                 <Flex gap={"1em"} align={"center"} justify={"end"}>
-                    <Button
-                        className={"!font-thin"}
-                        size={"middle"}
-                        type={"default"}
-                        onClick={() => {}}
-                    >
-                        存草稿
-                    </Button>
+                    {/*<Button*/}
+                    {/*    className={"!font-thin"}*/}
+                    {/*    size={"middle"}*/}
+                    {/*    type={"default"}*/}
+                    {/*    onClick={() => {}}*/}
+                    {/*>*/}
+                    {/*    存草稿*/}
+                    {/*</Button>*/}
                     <Button
                         className={"!font-thin"}
                         size={"middle"}
@@ -217,7 +173,12 @@ export default function PostNews() {
                 )}
                 destroyOnClose={true}
             >
-                <AddTagContainer />
+                <AddTagContainer
+                    setAddModalVisible={setAddModalVisible}
+                    gameTags={gameTags}
+                    setGameTags={setGameTags}
+                    addType={addType}
+                />
             </Modal>
         </>
     );

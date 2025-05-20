@@ -33,7 +33,8 @@ import {
     UserOutlined,
     SettingOutlined,
     StopOutlined,
-    CheckCircleOutlined, FireOutlined
+    CheckCircleOutlined,
+    FireOutlined,
 } from "@ant-design/icons";
 import type { TableProps, TabsProps } from "antd";
 import { FilterValue, SorterResult, SortOrder } from "antd/es/table/interface";
@@ -306,27 +307,30 @@ const CommunityManage = () => {
             dataIndex: "hot_point",
             key: "hot_point",
             sorter: true,
-            sortOrder: tableParams.sortField  === "hot_point" ? tableParams.sortOrder  : null,
+            sortOrder:
+                tableParams.sortField === "hot_point"
+                    ? tableParams.sortOrder
+                    : null,
             render: (hot_point: number) => {
                 // 根据热度值确定颜色和等级
-                let color = '';
-                let level = '';
+                let color = "";
+                let level = "";
 
                 if (hot_point >= 1000) {
-                    color = '#f5222d'; // 红
-                    level = '爆热';
+                    color = "#f5222d"; // 红
+                    level = "爆热";
                 } else if (hot_point >= 500) {
-                    color = '#fa541c'; // 橙红
-                    level = '热门';
+                    color = "#fa541c"; // 橙红
+                    level = "热门";
                 } else if (hot_point >= 200) {
-                    color = '#fa8c16'; // 橙
-                    level = '活跃';
+                    color = "#fa8c16"; // 橙
+                    level = "活跃";
                 } else if (hot_point >= 100) {
-                    color = '#faad14'; // 黄
-                    level = '温热';
+                    color = "#faad14"; // 黄
+                    level = "温热";
                 } else {
-                    color = '#d9d9d9'; // 灰
-                    level = '一般';
+                    color = "#d9d9d9"; // 灰
+                    level = "一般";
                 }
 
                 return (
@@ -335,9 +339,9 @@ const CommunityManage = () => {
                         style={{
                             fontWeight: 500,
                             borderRadius: 12,
-                            padding: '0 8px',
+                            padding: "0 8px",
                             minWidth: 50,
-                            textAlign: 'center'
+                            textAlign: "center",
                         }}
                     >
                         {hot_point} {hot_point >= 100 && <FireOutlined />}
@@ -420,11 +424,11 @@ const CommunityManage = () => {
                 setLoading(true);
                 const newStatus =
                     record.status === "active" ? "disabled" : "active";
-                await communityApi.batchUpdateStatus([record.id],
-                     newStatus
-                );
+                await communityApi.batchUpdateStatus([record.id], newStatus);
                 setCommunities((prev) =>
-                    prev.map((c) => (c.id === record.id ? {...c, status: newStatus} : c)),
+                    prev.map((c) =>
+                        c.id === record.id ? { ...c, status: newStatus } : c,
+                    ),
                 );
                 message.success(
                     `社区已${newStatus === "active" ? "激活" : "停用"}`,
@@ -502,13 +506,13 @@ const CommunityManage = () => {
 
     // 详情页标签页
     const detailTabs: TabsProps["items"] = [
-        {
-            key: "stats",
-            label: "统计数据",
-            children: currentCommunity && (
-                <CommunityStats community={currentCommunity} />
-            ),
-        },
+        // {
+        //     key: "stats",
+        //     label: "统计数据",
+        //     children: currentCommunity && (
+        //         <CommunityStats community={currentCommunity} />
+        //     ),
+        // },
         {
             key: "members",
             label: "成员管理",

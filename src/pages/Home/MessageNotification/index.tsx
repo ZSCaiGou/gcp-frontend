@@ -8,10 +8,12 @@ import {
     Layout,
     Typography,
     Tabs,
+    message,
 } from "antd";
 import { MailOutlined, NotificationOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getAllMessages, Message, readMessage } from "@/api/message.api.ts";
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -20,48 +22,71 @@ export default function MessageNotification() {
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState("1"); // 默认选中第一个标签页
 
+    useEffect(() => {
+        getAllMessages().then((res) => {
+            const data = res.data;
+            setInteractionMessages(
+                data.filter((data) => data.type === "event"),
+            );
+            setSystemMessages(data.filter((data) => data.type === "system"));
+        });
+    }, []);
     // 模拟消息数据
-    const [interactionMessages, setInteractionMessages] = useState([
-        { id: 1, content: "用户A点赞了您的帖子", time: "10:30", read: false },
-        { id: 2, content: "用户B评论了您的动态", time: "09:15", read: false },
-        { id: 3, content: "用户C关注了您", time: "昨天", read: true },
-    ]);
+    const [interactionMessages, setInteractionMessages] = useState<Message[]>(
+        [],
+    );
 
-    const [systemMessages, setSystemMessages] = useState([
-        { id: 1, content: "系统升级通知", time: "今天", read: false },
-        { id: 2, content: "新功能上线", time: "昨天", read: true },
-    ]);
+    const [systemMessages, setSystemMessages] = useState<Message[]>([]);
 
-    const markAsRead = (type: 'interaction' | 'system', id: number) => {
-        if (type === 'interaction') {
-            setInteractionMessages(prev => 
-                prev.map(msg => 
-                    msg.id === id ? {...msg, read: true} : msg
-                )
-            );
+    const markAsRead = (type: "event" | "system", id: string) => {
+        if (type === "event") {
+            readMessage(id)
+                .then(() => {
+                    setInteractionMessages((prev) =>
+                        prev.map((msg) =>
+                            msg.id === id ? { ...msg, is_read: true } : msg,
+                        ),
+                    );
+                })
+                .catch((err) => {
+                    message.error("互动消息已读失败，请稍后再试");
+                });
         } else {
-            setSystemMessages(prev => 
-                prev.map(msg => 
-                    msg.id === id ? {...msg, read: true} : msg
-                )
-            );
+            readMessage(id)
+                .then(() => {
+                    setSystemMessages((prev) =>
+                        prev.map((msg) =>
+                            msg.id === id ? { ...msg, is_read: true } : msg,
+                        ),
+                    );
+                })
+                .catch((err) => {
+                    message.error("系统通知已读失败，请稍后再试");
+                });
         }
     };
 
     const items = [
         {
-            key: '1',
+            key: "1",
             label: (
                 <span>
                     <MailOutlined />
                     互动消息
-                    {interactionMessages.filter((m) => !m.read).length >= 0 && (
-                        <Badge count={interactionMessages.filter((m) => !m.read).length} />
+                    {interactionMessages.filter((m) => !m.is_read).length >=
+                        0 && (
+                        <Badge
+                            count={
+                                interactionMessages.filter((m) => !m.is_read)
+                                    .length
+                            }
+                        />
                     )}
                 </span>
             ),
             children: (
                 <List
+
                     dataSource={interactionMessages}
                     renderItem={(item) => (
                         <List.Item
@@ -70,15 +95,25 @@ export default function MessageNotification() {
                                 padding: "12px 16px",
                                 transition: "all 0.3s",
                             }}
-                            onClick={() => markAsRead('interaction', item.id)}
-                            onMouseEnter={() => markAsRead('interaction', item.id)}
+                            onClick={() => markAsRead("event", item.id)}
+                            onMouseEnter={() => markAsRead("event", item.id)}
                         >
                             <List.Item.Meta
-                                title={<>
-                                    {!item.read && <Badge dot color="red" style={{marginRight: 8}} />}
-                                    {item.content}
-                                </>}
-                                description={item.time}
+                                title={
+                                    <>
+                                        {!item.is_read && (
+                                            <Badge
+                                                dot
+                                                color="red"
+                                                style={{ marginRight: 8 }}
+                                            />
+                                        )}
+                                        {item.content}
+                                    </>
+                                }
+                                description={new Date(
+                                    item.created_at,
+                                ).toLocaleString()}
                             />
                         </List.Item>
                     )}
@@ -86,18 +121,23 @@ export default function MessageNotification() {
             ),
         },
         {
-            key: '2',
+            key: "2",
             label: (
                 <span>
                     <NotificationOutlined />
                     系统通知
-                    {systemMessages.filter((m) => !m.read).length >= 0 && (
-                        <Badge count={systemMessages.filter((m) => !m.read).length} />
+                    {systemMessages.filter((m) => !m.is_read).length >= 0 && (
+                        <Badge
+                            count={
+                                systemMessages.filter((m) => !m.is_read).length
+                            }
+                        />
                     )}
                 </span>
             ),
             children: (
                 <List
+
                     dataSource={systemMessages}
                     renderItem={(item) => (
                         <List.Item
@@ -106,15 +146,25 @@ export default function MessageNotification() {
                                 padding: "12px 16px",
                                 transition: "all 0.3s",
                             }}
-                            onClick={() => markAsRead('system', item.id)}
-                            onMouseEnter={() => markAsRead('system', item.id)}
+                            onClick={() => markAsRead("system", item.id)}
+                            onMouseEnter={() => markAsRead("system", item.id)}
                         >
                             <List.Item.Meta
-                                title={<>
-                                    {!item.read && <Badge dot color="red" style={{marginRight: 8}} />}
-                                    {item.content}
-                                </>}
-                                description={item.time}
+                                title={
+                                    <>
+                                        {!item.is_read && (
+                                            <Badge
+                                                dot
+                                                color="red"
+                                                style={{ marginRight: 8 }}
+                                            />
+                                        )}
+                                        {item.content}
+                                    </>
+                                }
+                                description={new Date(
+                                    item.created_at,
+                                ).toLocaleString()}
                             />
                         </List.Item>
                     )}
@@ -124,11 +174,11 @@ export default function MessageNotification() {
     ];
 
     return (
-        <Layout style={{ height: "100vh" }}>
-            <Content>
+        <Layout className={"!min-h-60"}>
+            <Content >
                 <Card style={{ height: "100%" }}>
-                    <Tabs 
-                        activeKey={activeTab} 
+                    <Tabs
+                        activeKey={activeTab}
                         onChange={setActiveTab}
                         items={items}
                     />

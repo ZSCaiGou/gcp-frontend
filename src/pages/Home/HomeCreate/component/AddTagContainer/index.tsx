@@ -4,7 +4,7 @@ import { Game } from "@/Entity/game.entity.ts";
 import { Topic } from "@/Entity/topic.entity.ts";
 import { Flex, Input, message, Image, Button, Modal } from "antd";
 import { getGameTags } from "@/api/game.api.ts";
-import { getTopicTags } from "@/api/topic.api.ts";
+import { addTopic, getTopicTags } from "@/api/topic.api.ts";
 
 export default function AddTagContainer({
     gameTags,
@@ -13,14 +13,49 @@ export default function AddTagContainer({
     setTopicTags,
     addType,
     setAddModalVisible,
+}:{
+    gameTags: Game[];
+    setGameTags: (tags: Game[]) => void;
+    topicTags?: Topic[];
+    setTopicTags?: (tags: Topic[]) => void;
+    addType: string;
+    setAddModalVisible: (visible: boolean) => void;
 }) {
-    const [searchKey, setSearchKey] = useState<string>();
-    const [defaultTags, setDefaultTags] = useState<Game[] | Topic[]>([]);
+    const [searchKey, setSearchKey] = useState<string>("");
+    const [defaultTags, setDefaultTags] = useState<(Game | Topic)[]>([]);
+    const [filterTags, setFilterTags] = useState<(Game | Topic)[]>([]);
     const [addTagModalVisible, setAddTagModalVisible] = useState(false);
     const searchBar = (
-        <Input variant={"filled"} placeholder={"搜索" + addType}></Input>
+        <Input
+            variant={"filled"}
+            placeholder={"搜索" + addType}
+            onChange={(e) => {
+                setSearchKey(e.target.value);
+            }}
+        ></Input>
     );
-
+    // 添加自定义话题
+    const handleAddTag = async () => {
+        try {
+            const res = await addTopic(searchKey);
+            console.log(res);
+            if (res.code === 200) {
+                message.success("添加成功");
+                setAddTagModalVisible(false);
+                const tags = await getTopicTags();
+                if (tags.code === 200){
+                    setDefaultTags(tags.data)
+                }
+                setTopicTags([...topicTags, res.data]);
+                setAddTagModalVisible(false)
+                setAddModalVisible(false);
+            }else{
+                message.error(res.message);
+            }
+        } catch (error) {
+            message.error(error.message);
+        }
+    };
     useEffect(() => {
         if (addType === "社区") {
             getGameTags()
@@ -41,10 +76,22 @@ export default function AddTagContainer({
                 });
         }
     }, []);
+    useEffect(() => {
+        if (searchKey !== "") {
+            console.log(searchKey);
+            const filter = defaultTags.filter((tag) => {
+                return tag.title.includes(searchKey);
+            });
+            setFilterTags(filter);
+        } else {
+            setFilterTags([...defaultTags]);
+        }
+    }, [searchKey, defaultTags]);
     if (addType === "社区") {
-        const tagList = (defaultTags as Game[]).map((tag) => {
+        const tagList = (filterTags as Game[]).map((tag) => {
             return (
                 <Flex
+                    key={tag.id}
                     align={"center"}
                     gap={"0.5em"}
                     className={
@@ -82,13 +129,16 @@ export default function AddTagContainer({
             <>
                 <Flex>{searchBar}</Flex>
                 <div className={"mt-4"}></div>
-                <Flex vertical>{tagList}</Flex>
+                <Flex className={"!max-h-[300px] overflow-y-auto"} vertical>
+                    {tagList}
+                </Flex>
             </>
         );
     } else if (addType === "话题") {
-        const tagList = (defaultTags as Topic[]).map((tag) => {
+        const tagList = (filterTags as Topic[]).map((tag) => {
             return (
                 <Flex
+                    key={tag.id}
                     align={"center"}
                     gap={"0.5em"}
                     className={
@@ -133,12 +183,14 @@ export default function AddTagContainer({
                     </Button>
                 </Flex>
                 <div className={"mt-4"}></div>
-                <Flex vertical>{tagList}</Flex>
+                <Flex className={"!max-h-[300px] overflow-y-auto"} vertical>
+                    {tagList}
+                </Flex>
 
                 <Modal
                     title={"添加话题"}
                     open={addTagModalVisible}
-                    onOk={() => {}}
+                    onOk={handleAddTag}
                     onCancel={() => {
                         setAddTagModalVisible(false);
                     }}

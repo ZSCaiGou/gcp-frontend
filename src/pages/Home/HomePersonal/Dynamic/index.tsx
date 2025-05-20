@@ -21,7 +21,7 @@ export default function Dynamic() {
                 message.error(error.message);
             });
     }, [userId]);
-
+    // 删除动态内容
     const handleDeleteContent = (id: string) => {
         setPersonDynamicContentList(
             personDynamicContentList.filter(
@@ -29,7 +29,7 @@ export default function Dynamic() {
             ),
         );
     };
-
+    // 动态内容列表
     const cardList = personDynamicContentList?.map((item) => (
         <ContentCard
             onClick={() => {

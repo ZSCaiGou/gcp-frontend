@@ -69,8 +69,20 @@ export default function PostUpload() {
             type: UserContentType.GUIDE,
             game_ids: gameTags.map((game) => game.id),
             topic_ids: topicTags.map((topic) => topic.id),
-            cover_url: fileList[0].response.data,
+            cover_url: fileList[0]?.response.data || "",
         };
+        if (!contentTitle) {
+            message.error("请填写标题");
+            return;
+        }
+        if (contentValue.length === 0) {
+            message.error("请填写内容");
+            return;
+        }
+        if (gameTags.length === 0) {
+            message.error("必须选择一个社区");
+            return;
+        }
         if (type === "draft") {
             saveUploadContentAsDraft(data)
                 .then((res) => {
@@ -234,14 +246,14 @@ export default function PostUpload() {
                 </Flex>
                 {/* 保存和存草稿按钮*/}
                 <Flex gap={"1em"} align={"center"} justify={"end"}>
-                    <Button
-                        className={"!font-thin"}
-                        size={"middle"}
-                        type={"default"}
-                        onClick={() => {}}
-                    >
-                        存草稿
-                    </Button>
+                    {/*<Button*/}
+                    {/*    className={"!font-thin"}*/}
+                    {/*    size={"middle"}*/}
+                    {/*    type={"default"}*/}
+                    {/*    onClick={() => {}}*/}
+                    {/*>*/}
+                    {/*    存草稿*/}
+                    {/*</Button>*/}
                     <Button
                         className={"!font-thin"}
                         size={"middle"}

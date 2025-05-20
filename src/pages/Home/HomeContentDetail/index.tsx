@@ -24,6 +24,8 @@ import {
     Space,
     Spin,
     Tabs,
+    Tag,
+    MenuProps,
 } from "antd";
 import {
     LikeFilled,
@@ -79,7 +81,7 @@ export default function HomeContentDetail() {
     const fetchContent = async () => {
         try {
             setLoading(true);
-            const res = await getUserContentById(contentId!);
+            const res = await getUserContentById(contentId!,sortType);
             setUserContent(res.data);
             setComments(
                 res.data?.comments?.map((comment) => ({
@@ -117,20 +119,47 @@ export default function HomeContentDetail() {
     const handleCommentLike = async (commentId: string) => {
         try {
             const res = await likeComment(commentId);
-            setComments((prev) =>
-                prev.map((comment) => {
-                    if (comment.id === commentId) {
-                        return {
-                            ...comment,
-                            isLiked: !comment.isLiked,
-                            likeCount: comment.isLiked
-                                ? comment.likeCount - 1
-                                : comment.likeCount + 1,
-                        };
-                    }
-                    return comment;
-                }),
-            );
+            const originId = res.data.origin_id; // 获取
+            if (commentId !== originId) {
+                // 点赞的评论的源id不等于评论id，说明是回复的评论，需要更新评论的回复列表
+                setComments((prev) =>
+                    prev.map((comment) => {
+                        if (comment.id === originId) {
+                            return {
+                                ...comment,
+                                replies: comment.replies?.map((reply) => {
+                                    if (reply.id === commentId) {
+                                        return {
+                                            ...reply,
+                                            isLiked: !reply.isLiked,
+                                            likeCount: reply.isLiked
+                                                ? reply.likeCount - 1
+                                                : reply.likeCount + 1,
+                                        };
+                                    }
+                                    return reply;
+                                }),
+                            };
+                        }
+                        return comment;
+                    }),
+                );
+            } else {
+                setComments((prev) =>
+                    prev.map((comment) => {
+                        if (comment.id === commentId) {
+                            return {
+                                ...comment,
+                                isLiked: !comment.isLiked,
+                                likeCount: comment.isLiked
+                                    ? comment.likeCount - 1
+                                    : comment.likeCount + 1,
+                            };
+                        }
+                        return comment;
+                    }),
+                );
+            }
         } catch (err) {
             message.error(err.message);
         }
@@ -158,15 +187,19 @@ export default function HomeContentDetail() {
     };
     // 分享
     const handleShare = async () => {
-        try {
-            setActionLoading((prev) => ({ ...prev, share: true }));
-            await shareContent(contentId!);
-            message.success("分享成功");
-        } catch (err) {
-            message.error(err.message);
-        } finally {
-            setActionLoading((prev) => ({ ...prev, share: false }));
-        }
+        const link = window.location.href;
+
+        await navigator.clipboard.writeText(link);
+        message.success("链接已复制到剪贴板");
+        // try {
+        //     setActionLoading((prev) => ({ ...prev, share: true }));
+        //     await shareContent(contentId!);
+        //     message.success("分享成功");
+        // } catch (err) {
+        //     message.error(err.message);
+        // } finally {
+        //     setActionLoading((prev) => ({ ...prev, share: false }));
+        // }
     };
     // 评论
     const handleCommentSubmit = async () => {
@@ -257,7 +290,6 @@ export default function HomeContentDetail() {
         ) {
             try {
                 const res = await getReplies(commentId);
-                console.log(res.data);
                 setComments((prev) =>
                     prev.map((c) => {
                         if (c.id === commentId) {
@@ -287,19 +319,16 @@ export default function HomeContentDetail() {
         }
     };
     // 分享选项
-    const shareOptions = (
-        <div className="p-2">
-            <Button type="text" block>
-                复制链接
-            </Button>
-            {/* <Button type="text" block>
-                分享到微信
-            </Button>
-            <Button type="text" block>
-                分享到微博
-            </Button> */}
-        </div>
-    );
+    const shareOptions: MenuProps["items"] = [
+        {
+            key: "share",
+            label: (
+                <Button onClick={handleShare} type="link" >
+                    复制链接
+                </Button>
+            ),
+        },
+    ];
     // 排序选项
     const sortItems = [
         {
@@ -345,6 +374,7 @@ export default function HomeContentDetail() {
         >
             回复
         </Button>,
+        // 只有评论不为最顶层才显示展开/收起按钮
         comment.reply_count > 0 && comment.origin_id === comment.id && (
             <Button
                 key="toggle-replies"
@@ -379,17 +409,30 @@ export default function HomeContentDetail() {
                 </Avatar>
                 <div className="ml-3 flex-1">
                     <div className="flex items-center">
-                        <span className="font-medium">
+                        <span className="flex items-center font-medium">
                             {comment.user_info.nickname}
+                            <Tag
+                                color={"gold-inverse"}
+                                bordered={false}
+                                style={{
+                                    fontSize: 8,
+                                    marginLeft: 5,
+                                    lineHeight: "12px",
+                                    width: "20px",
+                                    padding: "0 2px",
+                                }}
+                            >
+                                LV.{comment.user_info.level || 1}
+                            </Tag>
                         </span>
                         {replyToName && (
-                            <span className={"ml-2 text-xs text-gray-500"}>
+                            <span className={"ml-1 text-xs text-gray-500"}>
                                 <CaretRightOutlined />
                                 {replyToName}
                             </span>
                         )}
                         <span className="ml-2 text-xs text-gray-500">
-                            {dayjs(comment.create_at).fromNow()}
+                            {dayjs(comment.created_at || comment.create_at).fromNow()}
                         </span>
                     </div>
                     <div className="mt-1">{comment.content}</div>
@@ -400,7 +443,7 @@ export default function HomeContentDetail() {
                     </div>
                 </div>
             </div>
-
+            {/*回复评论的弹出层*/}
             {replyingTo === comment.id && (
                 <div className="mt-3 ml-10 flex">
                     <Input
@@ -416,7 +459,7 @@ export default function HomeContentDetail() {
                     />
                 </div>
             )}
-
+            {/*展开/收起评论的弹出层*/}
             {comment.showReplies && (
                 <div className="mt-3">
                     {comment.loadingReplies ? (
@@ -563,16 +606,18 @@ export default function HomeContentDetail() {
                         {userContent?.collect_count || 0}
                     </Button>
 
-                    <Popover content={shareOptions} trigger="click">
+                    <Dropdown
+                        menu={{ items: shareOptions }}
+                        trigger={["click"]}
+                    >
                         <Button
                             type="text"
                             icon={<ShareAltOutlined />}
                             loading={actionLoading.share}
-                            onClick={handleShare}
                         >
                             分享
                         </Button>
-                    </Popover>
+                    </Dropdown>
                 </Flex>
             </Flex>
         </Flex>

@@ -23,11 +23,13 @@ export type UserContentComment = {
     likeCount: number,
     reply_count:number,
     create_at: string,
+    created_at?: string,
     isLiked: boolean,
     user_info: {
         id: string,
         nickname: string,
         avatar_url: string,
+        level: number,
     },    
     replies?: UserContentComment[];
     showReplies?: boolean;

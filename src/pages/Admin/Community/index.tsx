@@ -57,16 +57,16 @@ const CommunityAdmin = () => {
             ),
             children: <ContentReview managedCommunities={managedCommunities} />,
         },
-        {
-            key: "reports",
-            label: (
-                <span>
-                    <FlagOutlined />
-                    举报管理
-                </span>
-            ),
-            children: <ReportManage managedCommunities={managedCommunities} />,
-        },
+        // {
+        //     key: "reports",
+        //     label: (
+        //         <span>
+        //             <FlagOutlined />
+        //             举报管理
+        //         </span>
+        //     ),
+        //     children: <ReportManage managedCommunities={managedCommunities} />,
+        // },
         {
             key: "analytics",
             label: (
@@ -86,9 +86,9 @@ const CommunityAdmin = () => {
                     社区管理后台
                 </div>
                 <Space>
-                    <Badge count={3}>
-                        <Button icon={<FlagOutlined />}>待处理举报</Button>
-                    </Badge>
+                    {/*<Badge count={3}>*/}
+                    {/*    <Button icon={<FlagOutlined />}>待处理举报</Button>*/}
+                    {/*</Badge>*/}
                     <Button
                         type="text"
                         onClick={() => {

@@ -12,11 +12,13 @@ interface ApiResponse<T> {
     data: T;
     message: string;
 }
+
 export interface ModeratorCommunity {
     id: string;
     name: string;
     description: string;
 }
+
 export interface CommunityContent {
     id: string;
     title: string;
@@ -72,16 +74,20 @@ export const moderatorApi = {
         action: "approve" | "reject",
     ): Promise<void> => {
         try {
-            await axios.post(
-                `/moderator/content/${contentId}/review`,
-                {
-                    action,
-                },
-            );
+            await axios.post(`/moderator/content/${contentId}/review`, {
+                action,
+            });
         } catch (error) {
             throw new Error(
                 `内容审核${action === "approve" ? "通过" : "拒绝"}失败`,
             );
         }
     },
+};
+export const applyForModerator = async (gameId: string) => {
+    try {
+        await axios.post(`/moderator/apply/${gameId}`);
+    } catch (error) {
+        throw new Error("申请失败");
+    }
 };

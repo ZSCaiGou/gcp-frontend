@@ -1,4 +1,4 @@
-import axios, { AxiosError } from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import { Game } from "@/Entity/game.entity.ts";
 import { Result } from "@/interface/common.ts";
 import { Category } from "@/Entity/category.entity.ts";
@@ -11,11 +11,9 @@ export function getGameTags(): Promise<Result<Game[]>> {
         axios
             .get("/game/tags")
             .then((res) => {
-
                 return resolve(res.data);
             })
             .catch((err: AxiosError) => {
-
                 return reject(err.response.data);
             });
     });
@@ -27,11 +25,9 @@ export function getGameById(id: string): Promise<Result<Game>> {
         axios
             .get("/game/get-game?id=" + id)
             .then((res) => {
-
                 return resolve(res.data);
             })
             .catch((err: AxiosError) => {
-
                 return reject(err.response.data);
             });
     });
@@ -43,11 +39,9 @@ export function getHotGameCommunityList(): Promise<Result<Game[]>> {
         axios
             .get("/game/hot-game-community")
             .then((res) => {
-
                 return resolve(res.data);
             })
             .catch((err: AxiosError) => {
-
                 return reject(err.response.data);
             });
     });
@@ -68,9 +62,6 @@ export function getGameCategoryList(): Promise<Result<Category[]>> {
             });
     });
 }
-
-
-
 
 // 根据分类获取游戏社区列表
 export function getGameCommunityByCategory(
@@ -105,42 +96,13 @@ export function getAllCategoryGameList(): Promise<Result<CategoryGameList[]>> {
     });
 }
 
-
 // 获取游戏社区帖子列表
-export function getGameCommunityPostContentList(gameId:string):Promise<Result<UserContent[]>> {
+export function getGameCommunityPostContentList(
+    gameId: string,
+): Promise<Result<UserContent[]>> {
     return new Promise((resolve, reject) => {
         axios
-            .get("/game/game-community-post-content?gameId="+gameId)
-            .then((res) => {
-                console.log(res.data);
-                return resolve(res.data);
-            })
-            .catch((err: AxiosError) => {
-                console.log(err);
-                return reject(err.response.data);
-            });
-    });
-}
-// 获取游戏社区攻略列表
-export function getGameCommunityGuideContentList(gameId:string):Promise<Result<UserContent[]>> {
-    return new Promise((resolve, reject) => {
-        axios
-            .get("/game/game-community-guide-content?gameId="+gameId)
-            .then((res) => {
-                console.log(res.data);
-                return resolve(res.data);
-            })
-            .catch((err: AxiosError) => {
-                console.log(err);
-                return reject(err.response.data);
-            });
-    });
-}
-// 获取游戏社区新闻资讯列表
-export function getGameCommunityNewsContentList(gameId:string):Promise<Result<UserContent[]>> {
-    return new Promise((resolve, reject) => {
-        axios
-            .get("/game/game-community-news-content?gameId="+gameId)
+            .get("/game/game-community-post-content?gameId=" + gameId)
             .then((res) => {
                 console.log(res.data);
                 return resolve(res.data);
@@ -152,3 +114,47 @@ export function getGameCommunityNewsContentList(gameId:string):Promise<Result<Us
     });
 }
 
+// 获取游戏社区攻略列表
+export function getGameCommunityGuideContentList(
+    gameId: string,
+): Promise<Result<UserContent[]>> {
+    return new Promise((resolve, reject) => {
+        axios
+            .get("/game/game-community-guide-content?gameId=" + gameId)
+            .then((res) => {
+                console.log(res.data);
+                return resolve(res.data);
+            })
+            .catch((err: AxiosError) => {
+                console.log(err);
+                return reject(err.response.data);
+            });
+    });
+}
+
+// 获取游戏社区新闻资讯列表
+export function getGameCommunityNewsContentList(
+    gameId: string,
+): Promise<Result<UserContent[]>> {
+    return new Promise((resolve, reject) => {
+        axios
+            .get("/game/game-community-news-content?gameId=" + gameId)
+            .then((res) => {
+                console.log(res.data);
+                return resolve(res.data);
+            })
+            .catch((err: AxiosError) => {
+                console.log(err);
+                return reject(err.response.data);
+            });
+    });
+}
+
+export const searchGames = async (search: string) => {
+    try {
+        const res:AxiosResponse<Result<Game[]>> = await axios.get("/game/search-games?search=" + search);
+        return res.data;
+    } catch (error) {
+        throw new Error(error.response.data.message || "请求失败");
+    }
+};

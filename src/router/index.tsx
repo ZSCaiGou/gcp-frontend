@@ -30,6 +30,7 @@ import Home from "@/pages/Home";
 
 import SystemAdmin from "@/pages/Admin/System";
 import CommunityAdmin from "@/pages/Admin/Community";
+import Search from "@/pages/Home/Search";
 
 export const router = createBrowserRouter([
     {
@@ -108,6 +109,39 @@ export const router = createBrowserRouter([
                 ],
             },
             {
+                path: "home-personal/:userId",
+                id: "home-personal-user",
+                element: (
+                    <SuspenseLoader>
+                        <HomePersonal />
+                    </SuspenseLoader>
+                ),
+                children: [
+                    {
+                        index: true,
+                        element: <Navigate to={"dynamic"} replace></Navigate>,
+                    },
+                    {
+                        path: "dynamic",
+                        id: "dynamic-user",
+                        element: (
+                            <SuspenseLoader>
+                                <Dynamic />
+                            </SuspenseLoader>
+                        ),
+                    },
+                    {
+                        path: "upload",
+                        id: "upload-user",
+                        element: (
+                            <SuspenseLoader>
+                                <Upload />
+                            </SuspenseLoader>
+                        ),
+                    },
+                ],
+            },
+            {
                 path: "home-game/:gameId",
                 id: "home-game",
                 element: (
@@ -162,6 +196,33 @@ export const router = createBrowserRouter([
                 ],
             },
             {
+              path: "edit-dynamic/:contentId",
+              id:'edit-dynamic'  ,
+              element: (
+                  <SuspenseLoader>
+                      <PostDynamic />
+                  </SuspenseLoader>
+              ),
+            },
+            {
+                path: "edit-news/:contentId",
+                id: "edit-news",
+                element: (
+                    <SuspenseLoader>
+                        <PostNews />
+                    </SuspenseLoader>
+                ),
+            },
+            {
+                path: "edit-upload/:contentId",
+                id: "edit-upload",
+                element: (
+                    <SuspenseLoader>
+                        <PostUpload />
+                    </SuspenseLoader>
+                )
+            },
+            {
                 path: "home-content-detail/:contentId",
                 id: "home-content-detail",
                 element: (
@@ -188,6 +249,16 @@ export const router = createBrowserRouter([
                     </SuspenseLoader>
                 ),
             },
+            {
+
+                path: "home-search",
+                id: "home-search",
+                element: (
+                    <SuspenseLoader>
+                        <Search />
+                    </SuspenseLoader>
+                )
+            }
         ],
     },
     {

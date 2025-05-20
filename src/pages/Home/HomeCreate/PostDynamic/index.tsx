@@ -25,12 +25,15 @@ import {
 } from "@/api/usercontent.api.ts";
 import MyEditor from "@/component/MyEditor";
 import AddTagContainer from "@/pages/Home/HomeCreate/component/AddTagContainer";
+import { useNavigate, useParams } from "react-router";
 
 export default function PostDynamic() {
     const [contentValue, setContentValue] = useState<string>();
     const [contentTitle, setContentTitle] = useState<string>();
 
     const [isSaveLoading, setIsSaveLoading] = useState(false);
+    const navigate = useNavigate();
+    const { contentId } = useParams<{ contentId?: string }>();
     // 标签相关
     const [addModalVisible, setAddModalVisible] = useState(false);
     const [addType, setAddType] = useState("社区");
@@ -40,7 +43,10 @@ export default function PostDynamic() {
     const [fileList, setFileList] = useState([]);
     const [previewImage, setPreviewImage] = useState<string>();
     const [previewOpen, setPreviewOpen] = useState(false);
+    // contentId存在时为修改，不存在时为新增
+    useEffect(()=>{
 
+    },[contentId])
     // 图片更改
     const handleChange: UploadProps["onChange"] = ({
         fileList: newFileList,
@@ -53,6 +59,7 @@ export default function PostDynamic() {
         setPreviewOpen(true);
     };
 
+    // 处理
     const handlePostDynamic = (type: "draft" | "publish") => {
         const data = {
             title: contentTitle,
@@ -63,6 +70,18 @@ export default function PostDynamic() {
             cover_url: fileList[0]?.response.data || null,
             picture_urls: fileList.map((file) => file.response.data),
         };
+        if (!contentTitle) {
+            message.error("请输入标题");
+            return;
+        }
+        if (contentValue.length === 0) {
+            message.error("请输入内容");
+            return;
+        }
+        if (gameTags.length === 0) {
+            message.error("必须选择一个社区");
+            return;
+        }
         if (type === "draft") {
             savePostContentAsDraft(data)
                 .then((res) => {
@@ -75,8 +94,15 @@ export default function PostDynamic() {
             setIsSaveLoading(true);
             savePostContent(data)
                 .then((res) => {
-                    message.success("发布成功");
-                    setIsSaveLoading(false);
+                    if (contentId) {
+                        message.success("修改成功");
+                        navigate("/home/home-personal");
+                        setIsSaveLoading(false);
+                    } else {
+                        message.success("发布成功");
+                        setIsSaveLoading(false);
+                        navigate("/home/home-personal");
+                    }
                 })
                 .catch((err) => {
                     message.error(err.message);
@@ -84,7 +110,6 @@ export default function PostDynamic() {
         }
     };
 
-    useEffect(() => {});
     // 上传按钮
     const uploadButton = (
         <button style={{ border: 0, background: "none" }} type="button">
@@ -238,21 +263,13 @@ export default function PostDynamic() {
                     <Button
                         className={"!font-thin"}
                         size={"middle"}
-                        type={"default"}
-                        onClick={() => {}}
-                    >
-                        存草稿
-                    </Button>
-                    <Button
-                        className={"!font-thin"}
-                        size={"middle"}
                         type={"primary"}
                         loading={isSaveLoading}
                         onClick={() => {
                             handlePostDynamic("publish");
                         }}
                     >
-                        发布
+                        {contentId ? "修改" : "发布"}
                     </Button>
                 </Flex>
             </Flex>

@@ -90,7 +90,10 @@ export default function SafeCenter() {
                 } else {
                     account = userInfo.email;
                 }
-                await safeApi.sendVerifyCode({ type: verifyMethod, account:"password" });
+                await safeApi.sendVerifyCode({
+                    type: verifyMethod,
+                    account: "password",
+                });
             }
             if (phoneModalVisible) {
                 if (userInfo.phone) {
@@ -306,72 +309,72 @@ export default function SafeCenter() {
                     </Flex>
                 </Card>
 
-                {/* 隐私设置 */}
-                <Card
-                    title={
-                        <Flex align="center" gap={8}>
-                            <EyeInvisibleOutlined />
-                            <Text strong>隐私设置</Text>
-                        </Flex>
-                    }
-                >
-                    <Flex vertical gap="middle">
-                        <Flex justify="space-between" align="center">
-                            <Text>公开个人资料</Text>
-                            <Switch defaultChecked />
-                        </Flex>
+                {/*/!* 隐私设置 *!/*/}
+                {/*<Card*/}
+                {/*    title={*/}
+                {/*        <Flex align="center" gap={8}>*/}
+                {/*            <EyeInvisibleOutlined />*/}
+                {/*            <Text strong>隐私设置</Text>*/}
+                {/*        </Flex>*/}
+                {/*    }*/}
+                {/*>*/}
+                {/*    <Flex vertical gap="middle">*/}
+                {/*        <Flex justify="space-between" align="center">*/}
+                {/*            <Text>公开个人资料</Text>*/}
+                {/*            <Switch defaultChecked />*/}
+                {/*        </Flex>*/}
 
-                        <Flex justify="space-between" align="center">
-                            <Text>允许陌生人查看您的收藏</Text>
-                            <Switch defaultChecked />
-                        </Flex>
+                {/*        <Flex justify="space-between" align="center">*/}
+                {/*            <Text>允许陌生人查看您的收藏</Text>*/}
+                {/*            <Switch defaultChecked />*/}
+                {/*        </Flex>*/}
 
-                        <Flex justify="space-between" align="center">
-                            <Text>允许陌生人查看您的关注</Text>
-                            <Switch />
-                        </Flex>
-                    </Flex>
-                </Card>
+                {/*        <Flex justify="space-between" align="center">*/}
+                {/*            <Text>允许陌生人查看您的关注</Text>*/}
+                {/*            <Switch />*/}
+                {/*        </Flex>*/}
+                {/*    </Flex>*/}
+                {/*</Card>*/}
 
-                {/* 登录设备管理 */}
-                <Card
-                    title={
-                        <Flex align="center" gap={8}>
-                            <UserOutlined />
-                            <Text strong>登录设备管理</Text>
-                        </Flex>
-                    }
-                >
-                    <Flex vertical gap="middle">
-                        <Flex justify="space-between" align="center">
-                            <Flex vertical>
-                                <Text strong>Windows 10 · Chrome</Text>
-                                <Text type="secondary">当前设备 · 北京</Text>
-                            </Flex>
-                            <Button type="text" disabled>
-                                当前设备
-                            </Button>
-                        </Flex>
+                {/*/!* 登录设备管理 *!/*/}
+                {/*<Card*/}
+                {/*    title={*/}
+                {/*        <Flex align="center" gap={8}>*/}
+                {/*            <UserOutlined />*/}
+                {/*            <Text strong>登录设备管理</Text>*/}
+                {/*        </Flex>*/}
+                {/*    }*/}
+                {/*>*/}
+                {/*    <Flex vertical gap="middle">*/}
+                {/*        <Flex justify="space-between" align="center">*/}
+                {/*            <Flex vertical>*/}
+                {/*                <Text strong>Windows 10 · Chrome</Text>*/}
+                {/*                <Text type="secondary">当前设备 · 北京</Text>*/}
+                {/*            </Flex>*/}
+                {/*            <Button type="text" disabled>*/}
+                {/*                当前设备*/}
+                {/*            </Button>*/}
+                {/*        </Flex>*/}
 
-                        <Divider />
+                {/*        <Divider />*/}
 
-                        <Flex justify="space-between" align="center">
-                            <Flex vertical>
-                                <Text>iPhone 13 · Safari</Text>
-                                <Text type="secondary">
-                                    2023-12-15 14:30 · 上海
-                                </Text>
-                            </Flex>
-                            <Button
-                                danger
-                                type="text"
-                                icon={<LogoutOutlined />}
-                            >
-                                退出
-                            </Button>
-                        </Flex>
-                    </Flex>
-                </Card>
+                {/*        <Flex justify="space-between" align="center">*/}
+                {/*            <Flex vertical>*/}
+                {/*                <Text>iPhone 13 · Safari</Text>*/}
+                {/*                <Text type="secondary">*/}
+                {/*                    2023-12-15 14:30 · 上海*/}
+                {/*                </Text>*/}
+                {/*            </Flex>*/}
+                {/*            <Button*/}
+                {/*                danger*/}
+                {/*                type="text"*/}
+                {/*                icon={<LogoutOutlined />}*/}
+                {/*            >*/}
+                {/*                退出*/}
+                {/*            </Button>*/}
+                {/*        </Flex>*/}
+                {/*    </Flex>*/}
+                {/*</Card>*/}
             </Flex>
 
             {/* 用户名修改弹窗 */}
@@ -605,7 +608,6 @@ export default function SafeCenter() {
                         <>
                             <Form.Item label="验证方式">
                                 <Flex gap={8}>
-                                    
                                     <Button
                                         type={
                                             verifyMethod === "email"
